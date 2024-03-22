@@ -137,7 +137,159 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
 
 ## Place3D Benchmark
 
-To be added.
+#### LiDAR Semantic Segmentation
+
+<table>
+    <thead>
+        <tr>
+            <th rowspan="2">Method</th>
+            <th colspan="3">Center</th>
+            <th colspan="3">Line</th>
+            <th colspan="3">Pyramid</th>
+            <th colspan="3">Square</th>
+        </tr>
+        <tr>
+            <th>mIoU</th><th>mAcc</th><th>ECE</th><th>mIoU</th><th>mAcc</th><th>ECE</th><th>mIoU</th><th>mAcc</th><th>ECE</th><th>mIoU</th><th>mAcc</th><th>ECE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>MinkUNet</td>
+            <td>65.7</td>
+            <td>72.4</td>
+            <td>0.041</td>
+            <td>59.7</td>
+            <td>67.7</td>
+            <td>0.037</td>
+            <td>62.7</td>
+            <td>70.6</td>
+            <td>0.072</td>
+            <td>60.7</td>
+            <td>68.4</td>
+            <td>0.043</td>
+        </tr>
+        <tr>
+            <td>PolarNet</td>
+            <td>71.0</td>
+            <td>76.0</td>
+            <td>0.033</td>
+            <td>67.7</td>
+            <td>74.1</td>
+            <td>0.034</td>
+            <td>67.7</td>
+            <td>73.0</td>
+            <td>0.032</td>
+            <td>69.3</td>
+            <td>74.7</td>
+            <td>0.033</td>
+        </tr>
+        <tr>
+            <td>SPVCNN</td>
+            <td>67.1</td>
+            <td>74.4</td>
+            <td>0.034</td>
+            <td>59.3</td>
+            <td>66.7</td>
+            <td>0.068</td>
+            <td>67.6</td>
+            <td>74.0</td>
+            <td>0.037</td>
+            <td>63.4</td>
+            <td>70.2</td>
+            <td>0.031</td>
+        </tr>
+        <tr>
+            <td>Cylinder3D</td>
+            <td>72.7</td>
+            <td>79.2</td>
+            <td>0.041</td>
+            <td>68.9</td>
+            <td>76.3</td>
+            <td>0.045</td>
+            <td>68.4</td>
+            <td>76.0</td>
+            <td>0.093</td>
+            <td>69.9</td>
+            <td>76.7</td>
+            <td>0.044</td>
+        </tr>
+        <tr>
+            <td><strong>Average</strong></span></td>
+            <td>69.1</span></td>
+            <td>75.5</span></td>
+            <td>0.037</span></td>
+            <td>63.9</span></td>
+            <td>71.2</span></td>
+            <td>0.046</span></td>
+            <td>66.6</span></td>
+            <td>73.4</span></td>
+            <td>0.059</span></td>
+            <td>65.8</span></td>
+            <td>72.5</span></td>
+            <td>0.038</span></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th rowspan="2">Method</th>
+            <th colspan="3">Trapezoid</th>
+            <th colspan="3">Line-Roll</th>
+            <th colspan="3">Pyramid-Roll</th>
+            <th colspan="3">Ours</th>
+        </tr>
+        <tr>
+            <th>mIoU</th><th>mAcc</th><th>ECE</th><th>mIoU</th><th>mAcc</th><th>ECE</th><th>mIoU</th><th>mAcc</th><th>ECE</th><th>mIoU</th><th>mAcc</th><th>ECE</th>
+        </tr>
+        <tr>
+            <td>MinkUNet</td>
+            <td>59.0</td>
+            <td>66.2</td>
+            <td>0.040</td>
+            <td>58.5</td>
+            <td>66.4</td>
+            <td>0.047</td>
+            <td>62.2</td>
+            <td>69.6</td>
+            <td>0.051</td>
+            <td>66.5</td>
+            <td>73.2</td>
+            <td>0.031</td>
+        </tr>
+        <tr>
+            <td>PolarNet</td>
+            <td>66.8</td>
+            <td>72.3</td>
+            <td>0.034</td>
+            <td>67.2</td>
+            <td>72.8</td>
+            <td>0.037</td>
+            <td>70.9</td>
+            <td>75.9</td>
+            <td>0.035</td>
+            <td>76.7</td>
+            <td>81.5</td>
+            <td>0.033</span></td>
+        </tr>
+        <tr>
+            <td>SPVCNN</td>
+            <td>61.0</td>
+            <td>68.8</td>
+            <td>0.044</td>
+            <td>60.6</td>
+            <td>68.0</td>
+            <td>0.034</td>
+            <td>67.9</td>
+            <td>74.2</td>
+            <td>0.033</td>
+            <td><68.3</td>
+            <td>74.6</td>
+            <td>0.034</td>
+        </tr>
+
+  
+    </tfoot>
+</table>
+        
 
 
 ## :memo: TODO List
