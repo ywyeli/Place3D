@@ -48,6 +48,15 @@
 To be added.
 
 
+| <img src="docs/figs/waymo.jpg" align="center" width="210"> | <img src="docs/figs/motional.jpg" align="center" width="210"> | <img src="docs/figs/cruise.jpg" align="center" width="210"> | <img src="docs/figs/pony.jpg" align="center" width="210"> |
+| :-: | :-: | :-: | :-: |
+| Waymo | Motional | Cruise | Pony.ai |
+| <img src="docs/figs/zoox.jpg" align="center" width="210"> | <img src="docs/figs/toyota.jpg" align="center" width="210"> | <img src="docs/figs/momenta.jpg" align="center" width="210"> | <img src="docs/figs/ford.jpg" align="center" width="210">
+| Zoox | Toyota | Momenta | Ford | 
+
+Visit our [project page]() to explore more examples. :blue_car:
+
+
 
 ## Updates
 
@@ -59,6 +68,7 @@ To be added.
 
 - [Installation](#gear-installation)
 - [Data Preparation](#hotsprings-data-preparation)
+- [Sensor Placement](#oncoming_automobile-sensor-placement)
 - [Getting Started](#rocket-getting-started)
 - [Model Zoo](#dragon-model-zoo)
 - [Place3D Benchmark](#place3d-benchmark)
@@ -78,6 +88,16 @@ For details related to installation and environment setups, kindly refer to [INS
 ## :hotsprings: Data Preparation
 
 Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details to prepare the Place3D dataset.
+
+
+
+## :oncoming_automobile: Sensor Placement
+
+| <img src="docs/figs/1_center.png" align="center" width="210"> | <img src="docs/figs/2_line.png" align="center" width="210"> | <img src="docs/figs/3_pyramid.png" align="center" width="210"> | <img src="docs/figs/4_square.png" align="center" width="210"> |
+| :-: | :-: | :-: | :-: |
+| Center | Line | Pyramid | Square |
+| <img src="docs/figs/5_trapezoid.png" align="center" width="210"> | <img src="docs/figs/6_line_roll.png" align="center" width="210"> | <img src="docs/figs/8_ours_det.png" align="center" width="210"> | <img src="docs/figs/7_ours_seg.png" align="center" width="210">
+| Trapezoid | Line-Roll | Ours (Det) | Ours (Seg) | 
 
 
 
