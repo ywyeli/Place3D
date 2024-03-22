@@ -2,16 +2,16 @@
 
 
 <p align="center">
-  <img src="docs/figs/logo.png" align="center" width="22%">
+  <img src="docs/figs/logo.png" align="center" width="25%">
   
   <h3 align="center"><strong>Optimizing LiDAR Placements for Robust Driving Perception in Adverse Conditions</strong></h3>
 
   <p align="center">
-      <a href="https://xiangxu-0103.github.io/" target='_blank'>Ye Li</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
+      <a href="https://ywyeli.github.io/" target='_blank'>Ye Li</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
       <a href="https://ldkong.com/" target='_blank'>Lingdong Kong</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
-      <a href="" target='_blank'>Hanjiang Hu</a><sup>3</sup>&nbsp;&nbsp;&nbsp;
-      <a href="" target='_blank'>Xiaohao Xu</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
-      <a href="" target='_blank'>Xiaonan Huang</a><sup>1</sup>
+      <a href="https://hanjianghu.net/" target='_blank'>Hanjiang Hu</a><sup>3</sup>&nbsp;&nbsp;&nbsp;
+      <a href="https://scholar.google.com/citations?user=3Ifn2DoAAAAJ" target='_blank'>Xiaohao Xu</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
+      <a href="https://robotics.umich.edu/profile/xiaonan-sean-huang/" target='_blank'>Xiaonan Huang</a><sup>1</sup>
   <br />
   <sup>1</sup>University of Michigan, Ann Arbor&nbsp;&nbsp;&nbsp;
   <sup>2</sup>National University of Singapore&nbsp;&nbsp;&nbsp;
@@ -169,10 +169,9 @@ If you find this work helpful for your research, please kindly consider citing o
 
 ## License
 
-> <img src="https://www.apache.org/img/asf-estd-1999-logo.jpg" width="24%"/><br>
-> This work is under the <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License Version 2.0</a>, while some specific operations in this codebase might be with other licenses.
+> <img src="https://www.apache.org/img/asf-estd-1999-logo.jpg" width="22%"/><br>
 
-Kindly refer to [LICENSE.md](docs/LICENSE.md) for a more careful check, if you are using our code for commercial matters.
+This work is under the <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License Version 2.0</a>, while some specific implementations in this codebase might be with other licenses. Kindly refer to [LICENSE.md](docs/LICENSE.md) for a more careful check, if you are using our code for commercial matters.
 
 
 
@@ -180,10 +179,10 @@ Kindly refer to [LICENSE.md](docs/LICENSE.md) for a more careful check, if you a
 
 This work is developed based on the [MMDetection3D](https://github.com/open-mmlab/mmdetection3d) codebase.
 
-> <img src="https://github.com/open-mmlab/mmdetection3d/blob/main/resources/mmdet3d-logo.png" width="30%"/><br>
+> <img src="https://github.com/open-mmlab/mmdetection3d/blob/main/resources/mmdet3d-logo.png" width="31%"/><br>
 > MMDetection3D is an open-source toolbox based on PyTorch, towards the next-generation platform for general 3D perception. It is a part of the OpenMMLab project developed by MMLab.
 
-We acknowledge the use of the following public resources, during the course of this work: 
+We acknowledge the use of the following public resources, during the course of this work: <sup>1</sup>[CARLA](https://github.com/carla-simulator/carla), <sup>2</sup>[nuScenes-devkit](https://github.com/nutonomy/nuscenes-devkit), <sup>3</sup>[SemanticKITTI-API](), <sup>4</sup>[MinkowskiEngine](https://github.com/NVIDIA/MinkowskiEngine), <sup>5</sup>[TorchSparse](https://github.com/mit-han-lab/torchsparse), <sup>6</sup>[Open3D-ML](https://github.com/isl-org/Open3D-ML), and <sup>7</sup>[Robo3D](https://github.com/ldkong1205/Robo3D).
 
 We thank the exceptional contributions from the above open-source repositories! :heart:
 
