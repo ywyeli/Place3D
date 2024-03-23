@@ -45,15 +45,13 @@
 
 ## About
 
-The robustness of driving perception systems under unprecedented conditions is crucial for safety-critical usages. Latest advancements have prompted increasing interests towards multi-LiDAR perception. However, prevailing driving datasets predominantly utilize single-LiDAR systems and collect data devoid of adverse conditions, failing to capture the complexities of real-world environments accurately.
-
-Addressing these gaps, we proposed `Place3D`, a full-cycle pipeline that encompasses LiDAR placement optimization, data generation, and downstream evaluations. Our framework makes three appealing contributions. 
+`Place3D` is a full-cycle pipeline that encompasses LiDAR placement optimization, data generation, and downstream evaluations. 
 
 - To identify the most effective configurations for multi-LiDAR systems, we introduce a Surrogate Metric of the Semantic Occupancy Grids (M-SOG) to evaluate LiDAR placement quality.
 - Leveraging the M-SOG metric, we propose a novel optimization strategy to refine multi-LiDAR placements.
 - Centered around the theme of multi-condition multi-LiDAR perception, we collect a 364,000-frame dataset from both clean and adverse conditions.
 
-Extensive experiments demonstrate that LiDAR placements optimized using our approach outperform various baselines. We showcase exceptional robustness in both 3D object detection and LiDAR semantic segmentation tasks, under diverse adverse weather and sensor failure conditions.
+We showcase exceptional robustness in both 3D object detection and LiDAR semantic segmentation tasks, under diverse adverse weather and sensor failure conditions.
 
 
 
@@ -329,8 +327,64 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
 
 ### 3D Object Detection
 
-
-
+<table>
+    <thead>
+        <tr>
+            <th rowspan="2"><strong>Method</strong></th>
+            <th colspan="3"><strong>Center</strong></th>
+            <th colspan="3"><strong>Line</strong></th>
+            <th colspan="3"><strong>Pyramid</strong></th>
+            <th colspan="3"><strong>Square</strong></th>
+        </tr>
+        <tr>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>PointPillars</td>
+            <td>46.5</td>
+            <td>19.4</td>
+            <td>27.1</td>
+            <td>43.4</td>
+            <td>22.0</td>
+            <td>27.7</td>
+            <td>46.1</td>
+            <td>24.4</td>
+            <td>29.0</td>
+            <td>43.8</td>
+            <td>20.8</td>
+            <td>27.1</td>
+        </tr>
+        <tr>
+            <td>CenterPoint</td>
+            <td>55.8</td>
+            <td>28.7</td>
+            <td>28.8</td>
+            <td>54.0</td>
+            <td>34.2</td>
+            <td>37.7</td>
+            <td>55.9</td>
+            <td>37.4</td>
+            <td>35.6</td>
+            <td>54.0</td>
+            <td>35.5</td>
+            <td>34.1</td>
+        </tr>
+      
+    </tfoot>
+</table>
 
 
 ## :memo: TODO List
