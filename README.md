@@ -137,7 +137,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
 
 ## Place3D Benchmark
 
-#### LiDAR Semantic Segmentation
+### LiDAR Semantic Segmentation
 
 <table>
     <thead>
@@ -215,18 +215,18 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
         </tr>
         <tr>
             <td><strong>Average</strong></span></td>
-            <td>69.1</span></td>
-            <td>75.5</span></td>
-            <td>0.037</span></td>
-            <td>63.9</span></td>
-            <td>71.2</span></td>
-            <td>0.046</span></td>
-            <td>66.6</span></td>
-            <td>73.4</span></td>
-            <td>0.059</span></td>
-            <td>65.8</span></td>
-            <td>72.5</span></td>
-            <td>0.038</span></td>
+            <td>69.1</td>
+            <td>75.5</td>
+            <td>0.037</td>
+            <td>63.9</td>
+            <td>71.2</td>
+            <td>0.046</td>
+            <td>66.6</td>
+            <td>73.4</td>
+            <td>0.059</td>
+            <td>65.8</td>
+            <td>72.5</td>
+            <td>0.038</td>
         </tr>
     </tbody>
     <tfoot>
@@ -268,7 +268,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
             <td>0.035</td>
             <td>76.7</td>
             <td>81.5</td>
-            <td>0.033</span></td>
+            <td>0.033</td>
         </tr>
         <tr>
             <td>SPVCNN</td>
@@ -281,15 +281,47 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
             <td>67.9</td>
             <td>74.2</td>
             <td>0.033</td>
-            <td><68.3</td>
+            <td>68.3</td>
             <td>74.6</td>
             <td>0.034</td>
         </tr>
-
-  
+        <tr>
+            <td>Cylinder3D</td>
+            <td>68.5</td>
+            <td>75.4</td>
+            <td>0.057</td>
+            <td>69.8</td>
+            <td>77.0</td>
+            <td>0.048</td>
+            <td>69.3</td>
+            <td>77.0</td>
+            <td>0.048</td>
+            <td>73.0</td>
+            <td>78.9</td>
+            <td>0.037</td>
+        </tr>
+        <tr class="highlight">
+            <td><strong>Average</strong></td>
+            <td>63.8</td>
+            <td>70.7</td>
+            <td>0.044</td>
+            <td>64.0</td>
+            <td>71.1</td>
+            <td>0.042</td>
+            <td>67.6</td>
+            <td>74.2</td>
+            <td>0.042</td>
+            <td>71.1</td>
+            <td>77.1</td>
+            <td>0.034</td>
+        </tr>
     </tfoot>
 </table>
-        
+
+### 3D Object Detection
+
+
+
 
 
 ## :memo: TODO List
