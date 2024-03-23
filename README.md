@@ -94,6 +94,10 @@ For details related to installation and environment setups, kindly refer to [INS
 
 ## :hotsprings: Data Preparation
 
+Our dataset consists of a total of eleven LiDAR placements, in which seven baselines are inspired by existing self-driving configurations from autonomous vehicle companies and four LiDAR placements are obtained by optimization.
+
+Each LiDAR placement contains four LiDAR sensors. For each LiDAR configuration, the sub-dataset consists of 13,600 frames of samples, comprising 11,200 samples for training and 2,400 samples for validation, following the split ratio used in nuScenes. We combined every 40 frames of samples into one scene, with a time interval of 0.5 seconds between each frame sample.
+
 | <img src="docs/figs/town01.png" align="center" width="125"> | <img src="docs/figs/town03.png" align="center" width="125"> | <img src="docs/figs/town04.png" align="center" width="125"> | <img src="docs/figs/town06.png" align="center" width="125">
 | :-: | :-: | :-: | :-: | 
 | Town 1 | Town 3 | Town 4 | Town 6 |
@@ -322,6 +326,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
             <td>77.1</td>
             <td>0.034</td>
         </tr>
+    </tbody>
     </tfoot>
 </table>
 
@@ -382,7 +387,150 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
             <td>35.5</td>
             <td>34.1</td>
         </tr>
-      
+        <tr>
+            <td>BEVFusion-L</td>
+            <td>52.5</td>
+            <td>31.9</td>
+            <td>32.2</td>
+            <td>49.3</td>
+            <td>29.0</td>
+            <td>29.5</td>
+            <td>51.0</td>
+            <td>21.7</td>
+            <td>27.9</td>
+            <td>49.2</td>
+            <td>27.0</td>
+            <td>26.7</td>
+        </tr>
+        <tr>
+            <td>FSTR</td>
+            <td>55.3</td>
+            <td>27.7</td>
+            <td>29.3</td>
+            <td>51.9</td>
+            <td>30.2</td>
+            <td>33.0</td>
+            <td>55.7</td>
+            <td>29.4</td>
+            <td>33.8</td>
+            <td>52.8</td>
+            <td>30.3</td>
+            <td>31.3</td>
+        </tr>
+        <tr class="highlight">
+            <td><strong>Average</strong></td>
+            <td>52.5</td>
+            <td>26.9</td>
+            <td>29.4</td>
+            <td>49.7</td>
+            <td>28.9</td>
+            <td>32.0</td>
+            <td>52.2</td>
+            <td>28.2</td>
+            <td>31.6</td>
+            <td>50.0</td>
+            <td>28.4</td>
+            <td>29.8</td>
+        </tr>
+    </tbody>
+    <tbody>
+        <tr>
+            <th rowspan="2"><strong>Method</strong></th>
+            <th colspan="3"><strong>Trapezoid</strong></th>
+            <th colspan="3"><strong>Line-Roll</strong></th>
+            <th colspan="3"><strong>Pyramid-Roll</strong></th>
+            <th colspan="3" class="place3d_blue"><strong>Ours</strong></th>
+        </tr>
+        <tr>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+            <th>Car</th>
+            <th>Ped</th>
+            <th>Bicy</th>
+        </tr>
+        <tr>
+            <td>PointPillars</td>
+            <td>43.5</td>
+            <td>21.5</td>
+            <td>27.3</td>
+            <td>44.6</td>
+            <td>21.3</td>
+            <td>27.0</td>
+            <td>46.1</td>
+            <td>23.6</td>
+            <td>27.9</td>
+            <td>46.8</td>
+            <td>24.9</td>
+            <td>27.2</td>
+        </tr>
+        <tr>
+            <td>CenterPoint</td>
+            <td>55.4</td>
+            <td>35.6</td>
+            <td>37.5</td>
+            <td>55.2</td>
+            <td>32.7</td>
+            <td>37.2</td>
+            <td>56.2</td>
+            <td>36.5</td>
+            <td>35.9</td>
+            <td>57.1</td>
+            <td>34.4</td>
+            <td>37.3</td>
+        </tr>
+        <tr>
+            <td>BEVFusion-L</td>
+            <td>50.2</td>
+            <td>30.0</td>
+            <td>31.7</td>
+            <td>50.8</td>
+            <td>29.4</td>
+            <td>29.5</td>
+            <td>50.7</td>
+            <td>22.7</td>
+            <td>28.2</td>
+            <td>53.0</td>
+            <td>28.7</td>
+            <td>29.5</td>
+        </tr>
+        <tr>
+            <td>FSTR</td>
+            <td>54.6</td>
+            <td>30.0</td>
+            <td>33.3</td>
+            <td>53.5</td>
+            <td>29.8</td>
+            <td>32.4</td>
+            <td>55.5</td>
+            <td>29.9</td>
+            <td>32.0</td>
+            <td>56.6</td>
+            <td>31.9</td>
+            <td>34.1</td>
+        </tr>
+        <tr class="highlight">
+            <td><strong>Average</strong></td>
+            <td>50.9</td>
+            <td>29.3</td>
+            <td>32.5</td>
+            <td>51.0</td>
+            <td>28.3</td>
+            <td>31.5</td>
+            <td>52.1</td>
+            <td>28.2</td>
+            <td>31.0</td>
+            <td>53.4</td>
+            <td>30.0</td>
+            <td>32.0</td>
+        </tr>
+    </tbody>
     </tfoot>
 </table>
 
