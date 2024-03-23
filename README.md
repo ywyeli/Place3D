@@ -78,7 +78,7 @@ Visit our [project page]() to explore more examples. :blue_car:
 - [Sensor Placement](#blue_car-sensor-placement)
 - [Place3D Pipeline](#ferris_wheel-place3d-pipeline)
 - [Getting Started](#rocket-getting-started)
-- [SOG Generation](#gem-sog-generation)
+- [SOG Generation](#hammer_and_wrench-sog-generation)
 - [Model Zoo](#dragon-model-zoo)
 - [Place3D Benchmark](#bar_chart-place3d-benchmark)
 - [TODO List](#memo-todo-list)
@@ -96,7 +96,7 @@ For details related to installation and environment setups, kindly refer to [INS
 
 ## :hotsprings: Data Preparation
 
-The `Place3D` dataset consists of a total of eleven LiDAR placements, in which seven baselines are inspired by existing self-driving configurations from autonomous vehicle companies, and four LiDAR placements are obtained by sensor optimization.
+The `Place3D` dataset consists of a total of eleven LiDAR placements, in which seven baselines are inspired by existing self-driving configurations from autonomous vehicle companies and four LiDAR placements are obtained by sensor optimization.
 
 Each LiDAR placement contains four LiDAR sensors. For each LiDAR configuration, the sub-dataset consists of 13,600 frames of samples, comprising 11,200 samples for training and 2,400 samples for validation, following the split ratio used in nuScenes.
 
@@ -105,6 +105,10 @@ Each LiDAR placement contains four LiDAR sensors. For each LiDAR configuration, 
 | Town 1 | Town 3 | Town 4 | Town 6 |
 
 We choose four maps (Towns 1, 3, 4, and 6) in CARLA v0.9.10 to collect point cloud data and generate ground truth information. For each map, we manually set 6 ego-vehicle routes to cover all roads with no roads overlapped. The frequency of the simulation is set to 20 Hz. 
+
+Our datasets are hosted by [OpenDataLab](https://opendatalab.com/).
+><img src="https://raw.githubusercontent.com/opendatalab/dsdl-sdk/2ae5264a7ce1ae6116720478f8fa9e59556bed41/resources/opendatalab.svg" width="32%"/><br>
+> OpenDataLab is a pioneering open data platform for the large AI model era, making datasets accessible. By using OpenDataLab, researchers can obtain free formatted datasets in various fields.
 
 Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details to prepare the `Place3D` dataset.
 
@@ -134,7 +138,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
 
 
 
-## :gem: SOG Generation
+## :hammer_and_wrench: SOG Generation
 
 | <img src="docs/figs/sog.png" align="center" width="99%"> |
 | :-: | 
