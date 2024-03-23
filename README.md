@@ -75,7 +75,7 @@ Visit our [project page]() to explore more examples. :blue_car:
 
 - [Installation](#gear-installation)
 - [Data Preparation](#hotsprings-data-preparation)
-- [Sensor Placement](#oncoming_automobile-sensor-placement)
+- [Sensor Placement](#blue_car-sensor-placement)
 - [Getting Started](#rocket-getting-started)
 - [Model Zoo](#dragon-model-zoo)
 - [Place3D Benchmark](#place3d-benchmark)
@@ -94,19 +94,21 @@ For details related to installation and environment setups, kindly refer to [INS
 
 ## :hotsprings: Data Preparation
 
-Our dataset consists of a total of eleven LiDAR placements, in which seven baselines are inspired by existing self-driving configurations from autonomous vehicle companies and four LiDAR placements are obtained by optimization.
+The `Place3D` dataset consists of a total of eleven LiDAR placements, in which seven baselines are inspired by existing self-driving configurations from autonomous vehicle companies, and four LiDAR placements are obtained by sensor optimization.
 
-Each LiDAR placement contains four LiDAR sensors. For each LiDAR configuration, the sub-dataset consists of 13,600 frames of samples, comprising 11,200 samples for training and 2,400 samples for validation, following the split ratio used in nuScenes. We combined every 40 frames of samples into one scene, with a time interval of 0.5 seconds between each frame sample.
+Each LiDAR placement contains four LiDAR sensors. For each LiDAR configuration, the sub-dataset consists of 13,600 frames of samples, comprising 11,200 samples for training and 2,400 samples for validation, following the split ratio used in nuScenes.
 
 | <img src="docs/figs/town01.png" align="center" width="125"> | <img src="docs/figs/town03.png" align="center" width="125"> | <img src="docs/figs/town04.png" align="center" width="125"> | <img src="docs/figs/town06.png" align="center" width="125">
 | :-: | :-: | :-: | :-: | 
 | Town 1 | Town 3 | Town 4 | Town 6 |
 
+We choose four maps (Towns 1, 3, 4, and 6) in CARLA v0.9.10 to collect point cloud data and generate ground truth information. For each map, we manually set 6 ego-vehicle routes to cover all roads with no roads overlapped. The frequency of the simulation is set to 20 Hz. 
+
 Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details to prepare the `Place3D` dataset.
 
 
 
-## :oncoming_automobile: Sensor Placement
+## :blue_car: Sensor Placement
 
 | <img src="docs/figs/1_center.png" align="center" width="210"> | <img src="docs/figs/2_line.png" align="center" width="210"> | <img src="docs/figs/3_pyramid.png" align="center" width="210"> | <img src="docs/figs/4_square.png" align="center" width="210"> |
 | :-: | :-: | :-: | :-: |
@@ -114,6 +116,13 @@ Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details
 | <img src="docs/figs/5_trapezoid.png" align="center" width="210"> | <img src="docs/figs/6_line_roll.png" align="center" width="210"> | <img src="docs/figs/8_ours_det.png" align="center" width="210"> | <img src="docs/figs/7_ours_seg.png" align="center" width="210">
 | Trapezoid | Line-Roll | Ours (Det) | Ours (Seg) | 
 
+
+
+## Place3D Pipeline
+
+| <img src="docs/figs/pipeline.png" align="center" width="98%"> |
+| :-: | 
+| We first generate Probabilistic SOG (b) by merging multiple frames of data synthesized in CARLA into dense point cloud (a) and obtain voxels covered by LiDAR rays to compute the Surrogate Metric of Semantic Occupancy Grids (M-SOG) based on the joint probability distribution of covered voxels (c). We propose a CMA-ES-based optimization strategy to maximize M-SOG, finding optimal LiDAR placement (d). To verify the effectiveness of our optimization strategy, we contribute a multi-condition multi-LiDAR dataset (e). We train several state-of-the-art models and evaluate the performance of baseline and optimized placements on both clean and corruption data (f). Our optimized placement generally outperforms all baseline placements in experiments. |
 
 
 ## :rocket: Getting Started
