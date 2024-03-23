@@ -76,9 +76,11 @@ Visit our [project page]() to explore more examples. :blue_car:
 - [Installation](#gear-installation)
 - [Data Preparation](#hotsprings-data-preparation)
 - [Sensor Placement](#blue_car-sensor-placement)
+- [Place3D Pipeline](#ferris_wheel-place3d-pipeline)
 - [Getting Started](#rocket-getting-started)
+- [SOG Generation](#gem-sog-generation)
 - [Model Zoo](#dragon-model-zoo)
-- [Place3D Benchmark](#place3d-benchmark)
+- [Place3D Benchmark](#bar_chart-place3d-benchmark)
 - [TODO List](#memo-todo-list)
 - [Citation](#citation)
 - [License](#license)
@@ -118,16 +120,25 @@ Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details
 
 
 
-## Place3D Pipeline
+## :ferris_wheel: Place3D Pipeline
 
 | <img src="docs/figs/pipeline.png" align="center" width="98%"> |
 | :-: | 
 | We first generate Probabilistic SOG (b) by merging multiple frames of data synthesized in CARLA into dense point cloud (a) and obtain voxels covered by LiDAR rays to compute the Surrogate Metric of Semantic Occupancy Grids (M-SOG) based on the joint probability distribution of covered voxels (c). We propose a CMA-ES-based optimization strategy to maximize M-SOG, finding optimal LiDAR placement (d). To verify the effectiveness of our optimization strategy, we contribute a multi-condition multi-LiDAR dataset (e). We train several state-of-the-art models and evaluate the performance of baseline and optimized placements on both clean and corruption data (f). Our optimized placement generally outperforms all baseline placements in experiments. |
 
 
+
 ## :rocket: Getting Started
 
 To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/GET_STARTED.md).
+
+
+
+## :gem: SOG Generation
+
+| <img src="docs/figs/sog.png" align="center" width="99%"> |
+| :-: | 
+| We generate dense point clouds (b) by merging multiple frames of raw point clouds (a). Then, we voxelize the dense point clouds into Semantic Occupancy Grids (SOG) (c), and traverse all frames of dense point clouds to compute Probabilistic Semantic Occupancy Grids (P-SOG) (d). |
 
 
 
@@ -155,7 +166,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
 
 
 
-## Place3D Benchmark
+## :bar_chart: Place3D Benchmark
 
 ### LiDAR Semantic Segmentation
 
@@ -397,7 +408,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
             <td>34.1</td>
         </tr>
         <tr>
-            <td>BEVFusion-L</td>
+            <td>BEVFusionL</td>
             <td>52.5</td>
             <td>31.9</td>
             <td>32.2</td>
@@ -495,7 +506,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
             <td>37.3</td>
         </tr>
         <tr>
-            <td>BEVFusion-L</td>
+            <td>BEVFusionL</td>
             <td>50.2</td>
             <td>30.0</td>
             <td>31.7</td>
