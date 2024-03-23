@@ -45,7 +45,16 @@
 
 ## About
 
-To be added.
+The robustness of driving perception systems under unprecedented conditions is crucial for safety-critical usages. Latest advancements have prompted increasing interests towards multi-LiDAR perception. However, prevailing driving datasets predominantly utilize single-LiDAR systems and collect data devoid of adverse conditions, failing to capture the complexities of real-world environments accurately.
+
+Addressing these gaps, we proposed `Place3D`, a full-cycle pipeline that encompasses LiDAR placement optimization, data generation, and downstream evaluations. Our framework makes three appealing contributions. 
+
+- To identify the most effective configurations for multi-LiDAR systems, we introduce a Surrogate Metric of the Semantic Occupancy Grids (M-SOG) to evaluate LiDAR placement quality.
+- Leveraging the M-SOG metric, we propose a novel optimization strategy to refine multi-LiDAR placements.
+- Centered around the theme of multi-condition multi-LiDAR perception, we collect a 364,000-frame dataset from both clean and adverse conditions.
+
+Extensive experiments demonstrate that LiDAR placements optimized using our approach outperform various baselines. We showcase exceptional robustness in both 3D object detection and LiDAR semantic segmentation tasks, under diverse adverse weather and sensor failure conditions.
+
 
 
 | <img src="docs/figs/waymo.jpg" align="center" width="210"> | <img src="docs/figs/motional.jpg" align="center" width="210"> | <img src="docs/figs/cruise.jpg" align="center" width="210"> | <img src="docs/figs/pony.jpg" align="center" width="210"> |
@@ -87,11 +96,11 @@ For details related to installation and environment setups, kindly refer to [INS
 
 ## :hotsprings: Data Preparation
 
-| <img src="docs/figs/town01.png" align="center" width="150"> | <img src="docs/figs/town03.png" align="center" width="150"> | <img src="docs/figs/town04.png" align="center" width="150"> | <img src="docs/figs/town06.png" align="center" width="150">
+| <img src="docs/figs/town01.png" align="center" width="125"> | <img src="docs/figs/town03.png" align="center" width="125"> | <img src="docs/figs/town04.png" align="center" width="125"> | <img src="docs/figs/town06.png" align="center" width="125">
 | :-: | :-: | :-: | :-: | 
 | Town 1 | Town 3 | Town 4 | Town 6 |
 
-Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details to prepare the Place3D dataset.
+Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details to prepare the `Place3D` dataset.
 
 
 
