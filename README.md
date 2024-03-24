@@ -47,7 +47,7 @@
 
 `Place3D` is a full-cycle pipeline that encompasses LiDAR placement optimization, data generation, and downstream evaluations. 
 
-- To identify the most effective configurations for multi-LiDAR systems, we introduce a Surrogate Metric of the Semantic Occupancy Grids (M-SOG) to evaluate LiDAR placement quality.
+- To identify the most effective configurations for multi-LiDAR systems, we introduce the Surrogate Metric of the Semantic Occupancy Grids (M-SOG) to evaluate LiDAR placement quality.
 - Leveraging the M-SOG metric, we propose a novel optimization strategy to refine multi-LiDAR placements.
 - Centered around the theme of multi-condition multi-LiDAR perception, we collect a 364,000-frame dataset from both clean and adverse conditions.
 
