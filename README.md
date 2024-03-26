@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <a href="" target='_blank'>
+  <a href="https://arxiv.org/abs/2403.17009" target='_blank'>
     <img src="https://img.shields.io/badge/Paper-%F0%9F%93%83-slategray">
   </a>
   
@@ -67,7 +67,7 @@ Visit our [project page]() to explore more examples. :blue_car:
 
 ## Updates
 
-- \[2024.03\] - Our [paper]() is available on arXiv. The code has been made publicly accessible. :rocket:
+- \[2024.03\] - Our [paper](https://arxiv.org/abs/2403.17009) is available on arXiv. The code has been made publicly accessible. :rocket:
 
 
 
@@ -576,7 +576,7 @@ If you find this work helpful for your research, please kindly consider citing o
 @article{li2024place3d,
     author = {Ye Li and Lingdong Kong and Hanjiang Hu and Xiaohao Xu and Xiaonan Huang},
     title = {Optimizing LiDAR Placements for Robust Driving Perception in Adverse Conditions},
-    journal = {arXiv preprint arXiv:2403.},
+    journal = {arXiv preprint arXiv:2403.17009},
     year = {2024},
 }
 ```
