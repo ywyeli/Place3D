@@ -22,6 +22,7 @@ __all__ = [
     "save_image_data",
     "save_kitti_data",
     "save_lidar_data",
+    "save_lidar_data_sweeps",
     "save_lidarseg_tags",
     "save_ref_files",
     "to_bgra_array",
@@ -39,6 +40,7 @@ __all__ = [
 ]
 
 import math
+import toml
 
 from collections import namedtuple
 
@@ -108,6 +110,7 @@ def check_occlusion(image, vertices_pos2d, depth_map, draw_vertices=True):
             num_vertices_outside_camera += 1
     return num_visible_vertices, num_vertices_outside_camera
 
+
 def check_range(vertices_pos2d):
     """
     Check the range from vertices
@@ -123,7 +126,6 @@ def check_range(vertices_pos2d):
         else:
             num_invalid_vertices += 1
     return num_valid_vertices, num_invalid_vertices
-
 
 
 def point_is_occluded(point, vertex_depth, depth_map):
@@ -415,8 +417,6 @@ def transforms_from_agent(agent):
             ext = agent.bounding_box.extent
             location = agent.get_location()
 
-
-
     else:
         return (None, None, None, None, None)
     return obj_type, agent_transform, bbox_transform, ext, location
@@ -431,11 +431,9 @@ def to_rgb_array(image):
     return array
 
 
-
 import cv2
 import numpy as np
 import os
-
 
 
 def save_groundplanes(planes_fname, transform, lidar_height):
@@ -464,10 +462,11 @@ def save_groundplanes(planes_fname, transform, lidar_height):
 def save_ref_files(folder, id):
     """ Appends the id of the given record to the files """
     # NO USE
-    for name in ["train.txt", "val.txt", "trainval.txt"]:
+    # for name in ["train.txt", "val.txt", "trainval.txt"]:
+    for name in ["logs/data_index_list.txt"]:
         path = os.path.join(folder, name)
         with open(path, "a") as f:
-            f.write("{0:06}".format(id) + "\n")
+            f.write("15{0:014}".format(id) + "\n")
 
 
 def save_image_data(filename, image):
@@ -477,8 +476,56 @@ def save_image_data(filename, image):
     print(f"Saving {filename}")
 
 
-
 def save_lidar_data(filename, point_cloud, LIDAR_HEIGHT, format):
+    """Saves lidar data to given filename, according to the lidar data format.
+    bin is used for KITTI-data format, while .ply is the regular point cloud format
+    In Unreal, the coordinate system of the engine is defined as, which is the same as the lidar points
+    z
+    ^   ^ x
+    |  /
+    | /
+    |/____> y
+    This is a left-handed coordinate system, with x being forward, y to the right and z up
+    See also https://github.com/carla-simulator/carla/issues/498
+    However, the lidar coordinate system from KITTI is defined as
+          z
+          ^   ^ x
+          |  /
+          | /
+    y<____|/
+    Which is a right handed coordinate sylstem
+    Therefore, we need to flip the y axis of the lidar in order to get the correct lidar format for kitti.
+
+    This corresponds to the following changes from Carla to Kitti
+        Carla: X   Y   Z
+        KITTI: X  -Y   Z
+    NOTE: We do not flip the coordinate system when saving to .ply.
+    """
+
+    if format == "bin":
+
+        # fov_down = -25 / 180.0 * np.pi
+        # fov = (abs(-25) + abs(5.0)) / 180.0 * np.pi
+        # proj_y = (pitch + abs(fov_down)) / fov  # in [0.0, 1.0]
+        # proj_y *= 64  # in [0.0, H]
+        # proj_y = np.floor(proj_y)
+        # proj_y = np.minimum(64 - 1, proj_y)
+        # proj_y = np.maximum(0, proj_y).astype(np.int32)  # in [0,H-1]
+        # proj_y = proj_y.reshape(-1, 1)
+
+        lidar_array = [[point[1], point[0], point[2], 1.0, 0] for point in point_cloud]
+        lidar_array = np.array(lidar_array).astype(np.float32)
+        lidar_array.tofile(filename)
+    elif format == "pcd":
+        lidar_array = [[point[1], point[0], point[2], 1.0, 0] for point in point_cloud]
+        lidar_array = np.array(lidar_array).astype(np.float32)
+        lidar_array.tofile(filename)
+    else:
+        raise ValueError
+    print(f"Saving {filename}")
+
+
+def save_lidar_data_sweeps(filename, point_cloud, LIDAR_HEIGHT, format):
     """Saves lidar data to given filename, according to the lidar data format.
     bin is used for KITTI-data format, while .ply is the regular point cloud format
     In Unreal, the coordinate system of the engine is defined as, which is the same as the lidar points
@@ -606,7 +653,7 @@ def get_last_save_no(self, split):
     path = Path(self.OUTPUT_FOLDER) / split
     path_label = path / "calib"
 
-    path_label_0 = path_label / "000001.txt" # 1500000000000001.txt
+    path_label_0 = path_label / "000100000001.txt"  # 000001.txt
     if not path_label_0.exists():
         return 0
 
@@ -621,8 +668,10 @@ def get_last_save_no(self, split):
     return num
 
 
-def create_directories(self, split):
+def create_directories(self, split, args):
     path = Path(self.OUTPUT_FOLDER)
+    os.makedirs(path / "logs", exist_ok=True)
+
     os.makedirs(path / "IMAGE/CAM_FRONT", exist_ok=True)
     os.makedirs(path / "IMAGE/CAM_FRONT_LEFT", exist_ok=True)
     os.makedirs(path / "IMAGE/CAM_FRONT_RIGHT", exist_ok=True)
@@ -630,26 +679,23 @@ def create_directories(self, split):
     os.makedirs(path / "IMAGE/CAM_BACK_LEFT", exist_ok=True)
     os.makedirs(path / "IMAGE/CAM_BACK_RIGHT", exist_ok=True)
 
-    os.makedirs(path / "LiDAR_p0_samples/samples/LIDAR_TOP", exist_ok=True)
-    os.makedirs(path / "LiDAR_p1_samples/samples/LIDAR_TOP", exist_ok=True)
-    os.makedirs(path / "LiDAR_p2_samples/samples/LIDAR_TOP", exist_ok=True)
-    os.makedirs(path / "LiDAR_p3_samples/samples/LIDAR_TOP", exist_ok=True)
-    os.makedirs(path / "LiDAR_p4_samples/samples/LIDAR_TOP", exist_ok=True)
-    os.makedirs(path / "LiDAR_p5_samples/samples/LIDAR_TOP", exist_ok=True)
-    os.makedirs(path / "LiDAR_p6_samples/samples/LIDAR_TOP", exist_ok=True)
+    ldv = toml.load(f"../hyperparams/{args.lidar_params}")['lidar']
+    cdv = toml.load(f"../hyperparams/{args.lidar_params}")['camera']
 
-    os.makedirs(path / "LiDAR_p0_samples/lidarseg/v1.0-trainval", exist_ok=True)
-    os.makedirs(path / "LiDAR_p1_samples/lidarseg/v1.0-trainval", exist_ok=True)
-    os.makedirs(path / "LiDAR_p2_samples/lidarseg/v1.0-trainval", exist_ok=True)
-    os.makedirs(path / "LiDAR_p3_samples/lidarseg/v1.0-trainval", exist_ok=True)
-    os.makedirs(path / "LiDAR_p4_samples/lidarseg/v1.0-trainval", exist_ok=True)
-    os.makedirs(path / "LiDAR_p5_samples/lidarseg/v1.0-trainval", exist_ok=True)
-    os.makedirs(path / "LiDAR_p6_samples/lidarseg/v1.0-trainval", exist_ok=True)
+    print(ldv)
+    print(cdv)
+    
+    for p in range(ldv["sets"]):
+        os.makedirs(path / f"LiDAR_p{p}_samples/samples/LIDAR_TOP", exist_ok=True)
+        os.makedirs(path / f"LiDAR_p{p}_samples/sweeps/LIDAR_TOP", exist_ok=True)
+        os.makedirs(path / f"LiDAR_p{p}_samples/lidarseg/v1.0-trainval", exist_ok=True)
+        os.makedirs(path / f"LiDAR_p{p}_samples/sweeps_lidarseg/v1.0-trainval", exist_ok=True)
 
     path = Path(self.OUTPUT_FOLDER) / split
     os.makedirs(path / "label_2", exist_ok=True)
     os.makedirs(path / "image_2", exist_ok=True)
-
+    os.makedirs(path / "position", exist_ok=True)
+    os.makedirs(path / "timestamp", exist_ok=True)
     os.makedirs(path / "velodyne", exist_ok=True)
     os.makedirs(path / "calib", exist_ok=True)
     os.makedirs(path / "planes", exist_ok=True)

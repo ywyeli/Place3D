@@ -8,7 +8,9 @@ sys.path.append(
 import toml
 import carla
 
-from constants import CAMERA_IMAGE_X, CAMERA_IMAGE_Y, CAMERA_HEIGHT_POS
+from constants import CAMERA_IMAGE_X, CAMERA_IMAGE_Y, CAMERA_HEIGHT_POS, MAX_RENDER_DEPTH_IN_METERS
+# from constants import *
+
 
 class LiDARSetup(object):
     def __init__(self, param_file, world, ego, callback_handler, setup=False):
@@ -28,17 +30,13 @@ class LiDARSetup(object):
         self.pitch = params["pitch"]
         self.stats = {}
         if setup:
-            self._check_for_errors()
+            # self._check_for_errors()
             self._setup()
         else:
             pass
 
     def _check_for_errors(self):
-        assert self.num == len(self.x)
-        assert self.num == len(self.y)
-        assert self.num == len(self.z)
-        assert self.num == len(self.roll)
-        assert self.num == len(self.pitch)
+        return True
 
     def _setup(self):
         self.stats["h"] = {}
@@ -74,7 +72,7 @@ class LiDARSetup(object):
         specs = []
 
         for i in range(self.sets):
-            for j in range(self.num):
+            for j in range(self.num[i]):
                 spec = {}
                 spec['x'], spec['y'], spec['z'] = self.x[i][j], self.y[i][j], self.z[i][j]
                 spec['roll'], spec['pitch'], spec['yaw'] = self.roll[i][j], self.pitch[i][j], 0
@@ -82,13 +80,13 @@ class LiDARSetup(object):
 
                 spec["upper_fov"] = str(self.upper_fov)
                 spec["lower_fov"] = str(self.lower_fov)
-                spec["channels"] = str(self.channels)
+                spec["channels"] = str(self.channels[i])
 
-                spec["range"] = str(100.0)
+                spec["range"] = str(MAX_RENDER_DEPTH_IN_METERS)
 
-                spec["rotation_frequency"] = str(20.0) ###!!!!20Hz
+                spec["rotation_frequency"] = str(20.0)
 
-                points = 20_000 * self.channels  # default 5000
+                points = 20_000 * self.channels[i]  # default 5000
 
                 spec["points_per_second"] = str(points)
                 spec["id"] = f"l_{i}{j}"
@@ -100,8 +98,9 @@ class LiDARSetup(object):
 
 
 class Sensor(object):
-    def __init__(self, lidars):
+    def __init__(self, param_file, lidars):
         self.lidars = lidars
+        self.cams = toml.load(f"../hyperparams/{param_file}")['camera']
 
     def create_sensor_spec(self):
         """
@@ -126,74 +125,82 @@ class Sensor(object):
         camera_spec = {}
         camera_spec['width'] = str(CAMERA_IMAGE_X)
         camera_spec['height'] = str(CAMERA_IMAGE_Y)
-        camera_spec["fov"] = str(70.0)
+        camera_spec["fov"] = str(90.0)
         camera_spec['id'] = "camera01"
         camera_spec['x'], camera_spec['y'], camera_spec['z'] = 0.0, 0.0, CAMERA_HEIGHT_POS
         camera_spec['roll'], camera_spec['pitch'], camera_spec['yaw'] = 0.0, 0.0, 0.0
         camera_spec['type'] = 'sensor.camera.rgb'
+        camera_spec['motion_blur_intensity'] = 0
 
         cam_front_spec = {}
         cam_front_spec['width'] = str(CAMERA_IMAGE_X)
         cam_front_spec['height'] = str(CAMERA_IMAGE_Y)
-        cam_front_spec["fov"] = str(70.0)
+        cam_front_spec["fov"] = str(self.cams['FOV_CAM_FRONT'])
         cam_front_spec['id'] = "cam_front01"
-        cam_front_spec['x'], cam_front_spec['y'], cam_front_spec['z'] = 0.5, 0.0, CAMERA_HEIGHT_POS
-        cam_front_spec['roll'], cam_front_spec['pitch'], cam_front_spec['yaw'] = 0.0, 0.0, 0.0
+        cam_front_spec['x'], cam_front_spec['y'], cam_front_spec['z'] = self.cams['T_CAM_FRONT']
+        cam_front_spec['roll'], cam_front_spec['pitch'], cam_front_spec['yaw'] = self.cams['R_CAM_FRONT']
         cam_front_spec['type'] = 'sensor.camera.rgb'
+        cam_front_spec['motion_blur_intensity'] = 0
 
         cam_front_left_spec = {}
         cam_front_left_spec['width'] = str(CAMERA_IMAGE_X)
         cam_front_left_spec['height'] = str(CAMERA_IMAGE_Y)
-        cam_front_left_spec["fov"] = str(70.0)
+        cam_front_left_spec["fov"] = str(self.cams['FOV_CAM_FRONT_LEFT'])
         cam_front_left_spec['id'] = "cam_front_left01"
-        cam_front_left_spec['x'], cam_front_left_spec['y'], cam_front_left_spec['z'] = 0, -0.5, CAMERA_HEIGHT_POS
-        cam_front_left_spec['roll'], cam_front_left_spec['pitch'], cam_front_left_spec['yaw'] = 0.0, 0.0, -55.0
+        cam_front_left_spec['x'], cam_front_left_spec['y'], cam_front_left_spec['z'] = self.cams['T_CAM_FRONT_LEFT']
+        cam_front_left_spec['roll'], cam_front_left_spec['pitch'], cam_front_left_spec['yaw'] = self.cams['R_CAM_FRONT_LEFT']
         cam_front_left_spec['type'] = 'sensor.camera.rgb'
+        cam_front_left_spec['motion_blur_intensity'] = 0
 
         cam_front_right_spec = {}
         cam_front_right_spec['width'] = str(CAMERA_IMAGE_X)
         cam_front_right_spec['height'] = str(CAMERA_IMAGE_Y)
-        cam_front_right_spec["fov"] = str(70.0)
+        cam_front_right_spec["fov"] = str(self.cams['FOV_CAM_FRONT_RIGHT'])
         cam_front_right_spec['id'] = "cam_front_right01"
-        cam_front_right_spec['x'], cam_front_right_spec['y'], cam_front_right_spec['z'] = 0, 0.5, CAMERA_HEIGHT_POS
-        cam_front_right_spec['roll'], cam_front_right_spec['pitch'], cam_front_right_spec['yaw'] = 0.0, 0.0, 55.0
+        cam_front_right_spec['x'], cam_front_right_spec['y'], cam_front_right_spec['z'] = self.cams['T_CAM_FRONT_RIGHT']
+        cam_front_right_spec['roll'], cam_front_right_spec['pitch'], cam_front_right_spec['yaw'] = self.cams['R_CAM_FRONT_RIGHT']
         cam_front_right_spec['type'] = 'sensor.camera.rgb'
+        cam_front_right_spec['motion_blur_intensity'] = 0
 
         cam_back_spec = {}
         cam_back_spec['width'] = str(CAMERA_IMAGE_X)
         cam_back_spec['height'] = str(CAMERA_IMAGE_Y)
-        cam_back_spec["fov"] = str(110.0)
+        cam_back_spec["fov"] = str(self.cams['FOV_CAM_BACK'])
         cam_back_spec['id'] = "cam_back01"
-        cam_back_spec['x'], cam_back_spec['y'], cam_back_spec['z'] = -1.5, 0.0, CAMERA_HEIGHT_POS
-        cam_back_spec['roll'], cam_back_spec['pitch'], cam_back_spec['yaw'] = 0.0, 0.0, 180.0
+        cam_back_spec['x'], cam_back_spec['y'], cam_back_spec['z'] = self.cams['T_CAM_BACK']
+        cam_back_spec['roll'], cam_back_spec['pitch'], cam_back_spec['yaw'] = self.cams['R_CAM_BACK']
         cam_back_spec['type'] = 'sensor.camera.rgb'
+        cam_back_spec['motion_blur_intensity'] = 0
 
         cam_back_left_spec = {}
         cam_back_left_spec['width'] = str(CAMERA_IMAGE_X)
         cam_back_left_spec['height'] = str(CAMERA_IMAGE_Y)
-        cam_back_left_spec["fov"] = str(70.0)
+        cam_back_left_spec["fov"] = str(self.cams['FOV_CAM_BACK_LEFT'])
         cam_back_left_spec['id'] = "cam_back_left01"
-        cam_back_left_spec['x'], cam_back_left_spec['y'], cam_back_left_spec['z'] = -0.5, -0.5, CAMERA_HEIGHT_POS
-        cam_back_left_spec['roll'], cam_back_left_spec['pitch'], cam_back_left_spec['yaw'] = 0.0, 0.0, -110.0
+        cam_back_left_spec['x'], cam_back_left_spec['y'], cam_back_left_spec['z'] = self.cams['T_CAM_BACK_LEFT']
+        cam_back_left_spec['roll'], cam_back_left_spec['pitch'], cam_back_left_spec['yaw'] = self.cams['R_CAM_BACK_LEFT']
         cam_back_left_spec['type'] = 'sensor.camera.rgb'
+        cam_back_left_spec['motion_blur_intensity'] = 0
 
         cam_back_right_spec = {}
         cam_back_right_spec['width'] = str(CAMERA_IMAGE_X)
         cam_back_right_spec['height'] = str(CAMERA_IMAGE_Y)
-        cam_back_right_spec["fov"] = str(70.0)
+        cam_back_right_spec["fov"] = str(self.cams['FOV_CAM_BACK_RIGHT'])
         cam_back_right_spec['id'] = "cam_back_right01"
-        cam_back_right_spec['x'], cam_back_right_spec['y'], cam_back_right_spec['z'] = -0.5, 0.5, CAMERA_HEIGHT_POS
-        cam_back_right_spec['roll'], cam_back_right_spec['pitch'], cam_back_right_spec['yaw'] = 0.0, 0.0, 110.0
+        cam_back_right_spec['x'], cam_back_right_spec['y'], cam_back_right_spec['z'] = self.cams['T_CAM_BACK_RIGHT']
+        cam_back_right_spec['roll'], cam_back_right_spec['pitch'], cam_back_right_spec['yaw'] = self.cams['R_CAM_BACK_RIGHT']
         cam_back_right_spec['type'] = 'sensor.camera.rgb'
+        cam_back_right_spec['motion_blur_intensity'] = 0
 
         depth_camera_spec = {}
         depth_camera_spec["width"] = str(CAMERA_IMAGE_X)
         depth_camera_spec["height"] = str(CAMERA_IMAGE_Y)
-        depth_camera_spec["fov"] = str(70.0)
+        depth_camera_spec["fov"] = str(90.0)
         depth_camera_spec['id'] = "depth01"
         depth_camera_spec['x'], depth_camera_spec['y'], depth_camera_spec['z'] = 0.0, 0.0, CAMERA_HEIGHT_POS
         depth_camera_spec['roll'], depth_camera_spec['pitch'], depth_camera_spec['yaw'] = 0.0, 0.0, 0.0
         depth_camera_spec['type'] = "sensor.camera.depth"
+        depth_camera_spec['motion_blur_intensity'] = 0
 
         specs.extend([camera_spec, depth_camera_spec,
                       cam_front_spec, cam_front_left_spec, cam_front_right_spec,

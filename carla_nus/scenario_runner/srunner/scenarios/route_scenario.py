@@ -210,7 +210,7 @@ class RouteScenario(BasicScenario):
         elevate_transform = self.route[0][0]
         elevate_transform.location.z += 0.5
 
-        ego_vehicle = CarlaDataProvider.request_new_actor('vehicle.lincoln.mkz2017',
+        ego_vehicle = CarlaDataProvider.request_new_actor('vehicle.audi.tt',
                                                           elevate_transform,
                                                           rolename='hero')
 
@@ -331,7 +331,7 @@ class RouteScenario(BasicScenario):
             scenario_configuration.other_actors = list_of_actor_conf_instances
             scenario_configuration.trigger_points = [egoactor_trigger_position]
             scenario_configuration.subtype = definition['scenario_type']
-            scenario_configuration.ego_vehicles = [ActorConfigurationData('vehicle.lincoln.mkz2017',
+            scenario_configuration.ego_vehicles = [ActorConfigurationData('vehicle.audi.tt',
                                                                           ego_vehicle.get_transform(),
                                                                           'hero')]
             route_var_name = "ScenarioRouteNumber{}".format(scenario_number)
@@ -411,7 +411,7 @@ class RouteScenario(BasicScenario):
             'Town01': 100,
             'Town02': 120,
             'Town03': 100,
-            'Town04': 120,
+            'Town04': 180,
             'Town05': 120,
             'Town06': 120,
             'Town07': 120,

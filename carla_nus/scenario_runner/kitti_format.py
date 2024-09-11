@@ -35,6 +35,7 @@ class KittiDescriptor:
         self.location = location
         self.rotation_y = rotation_y
         self.extent = extent
+        self.instance_id = None
         # self._valid_classes = ['Car', 'Van', 'Truck', 'Pedestrian', 'Person_sitting',
         #                        'Cyclist', 'Tram', 'Misc', 'DontCare']
         self._valid_classes = ['car', 'truck', 'bus', 'bicycle', 'motorcycle', 'pedestrian']
@@ -115,13 +116,14 @@ class KittiDescriptor:
         # Convert from Carla coordinate system to KITTI
         self.location = " ".join(map(str, [-x, -y, z]))
 
-
-
     def set_rotation_y(self, rotation_y: float):
         assert - \
             pi <= rotation_y <= pi, "Rotation y must be in range [-pi..pi] - found {}".format(
                 rotation_y)
         self.rotation_y = rotation_y
+
+    def set_instance(self, instance):
+        self.instance_id = instance
 
     def __str__(self):
         """ Returns the kitti formatted string of the datapoint if it is valid (all critical variables filled out), else it returns an error."""
@@ -131,4 +133,4 @@ class KittiDescriptor:
             bbox_format = " ".join([str(x) for x in self.bbox])
 
         # type, truncated, occluded, alpha, bbox[0], bbox[1], bbox[2], bbox[3], Height, Width, Length, X, Y, Z, Rotation
-        return "{} {} {} {} {} {} {} {}".format(self.type, self.truncated, self.occluded, self.alpha, bbox_format, self.dimensions, self.location, self.rotation_y)
+        return "{} {} {} {} {} {} {} {} {}".format(self.type, self.truncated, self.occluded, self.alpha, bbox_format, self.dimensions, self.location, self.rotation_y, self.instance_id)

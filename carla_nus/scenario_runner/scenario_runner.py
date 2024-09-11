@@ -30,21 +30,22 @@ import json
 import numpy as np
 import math
 import toml
+import re
 
 # fill in the following with the absolution paths
 sys.path.append(
-    "/home/ye/Programs/carla_old/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg"
+    "/home/ye/Programs/carla_10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg"
 )
 sys.path.append(
-    "/home/ye/Programs/carla_old/PythonAPI/carla/agents"
+    "/home/ye/Programs/carla_10/PythonAPI/carla/agents"
 )
 sys.path.append(
-    "/home/ye/Programs/carla_old/PythonAPI/carla"
+    "/home/ye/Programs/carla_10/PythonAPI/carla"
 )
 sys.path.append(
-    "/home/ye/Programs/carla_old/PythonAPI"
+    "/home/ye/Programs/carla_10/PythonAPI"
 )
-os.environ['CARLA_ROOT'] = '/home/ye/Programs/carla_old'
+os.environ['CARLA_ROOT'] = '/home/ye/Programs/carla_10'
 os.environ['SCENARIO_RUNNER_ROOT'] = '../scenario_runner'
 
 
@@ -119,18 +120,22 @@ class ScenarioRunner(object):
         self.params = toml.load(f"../hyperparams/{args.hyperparams}")
         self.OUTPUT_FOLDER = self.params['paths']['output']
         self.update_paths(args)
-        create_directories(self, self.split)
         self.first = True
-        self.save_no = get_last_save_no(self, self.split) + 1
-        print(f"Found {self.save_no} in {self.OUTPUT_FOLDER}")
-        self.callback = callbackHandler()
-
-        self.sensor_save = False
         self._args = args
+        create_directories(self, self.split, self._args)
+        # self.save_no_1 = get_last_save_no(self, self.split)
+        # print(f"Found save_no {self.save_no_1} in {self.OUTPUT_FOLDER}")
+
+        if args.full_round:
+            os.makedirs(os.path.join(self.OUTPUT_FOLDER, "logs"), exist_ok=True)
+
+        self.callback = callbackHandler()
+        self.sensor_save = False
 
         self.camera_nos = 0
         self.depth_camera_nos = 0
         self.may_be = 999
+        self.pause_index = 999
 
         if args.timeout:
             self.client_timeout = float(args.timeout)
@@ -179,13 +184,14 @@ class ScenarioRunner(object):
         self._start_wall_time = datetime.now()
 
     def update_paths(self, args):
-        self.GROUNDPLANE_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/planes/{0:06}.txt')
+        self.GROUNDPLANE_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/planes/15{0:014}.txt')
 
         self.LIDAR_PATH = []
         self.LIDAR_SEG_PATH = []
-        fdv = toml.load(f"../hyperparams/{args.lidar_params}")['lidar']
-        print(fdv)
-        for p in range(fdv["sets"]):
+        ldv = toml.load(f"../hyperparams/{args.lidar_params}")['lidar']
+        cdv = toml.load(f"../hyperparams/{args.lidar_params}")['camera']
+
+        for p in range(ldv["sets"]):
             self.LIDAR_PATH.append(os.path.join(
                 f'../dataset/nus/LiDAR_p{p}_samples/',
                 'samples/LIDAR_TOP/n008-2018-08-01-00-00-00-0400__LIDAR_TOP__15{0:014}.pcd.bin'))
@@ -194,7 +200,9 @@ class ScenarioRunner(object):
 
         self.LABEL_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/label_2/15{0:014}.txt')
         self.IMAGE_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/image_2/15{0:014}.jpg')
-        self.CALIBRATION_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/calib/{0:06}.txt')
+        self.CALIBRATION_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/calib/{0:012}.txt')  # 000100000001.txt
+        self.EGO_POSITION_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/position/15{0:014}.txt')
+        self.TIMESTAMP_PATH = os.path.join(self.OUTPUT_FOLDER, 'training/timestamp/15{0:014}.txt')
 
         self.CAM_FRONT_PATH = os.path.join(self.OUTPUT_FOLDER,
                                            'IMAGE/CAM_FRONT/n008-2018-08-01-00-00-00-0400__CAM_FRONT__15{0:014}.jpg')
@@ -455,7 +463,7 @@ class ScenarioRunner(object):
     def camera_callback(self, image):
         print("function 'camera_callback' in 'scenario_runner.py' should not be called, please check the usage")
         self.image = image
-        self.callback(image, "cam_front01", self.callback.queue)
+        self.callback(image, "cam", self.callback.queue)
         self.image = image
         self.frame = self.image.frame
 
@@ -516,10 +524,11 @@ class ScenarioRunner(object):
         curr_location = self.vector3d_to_array(curr_location)
 
         yylen = len(self.prev_location)
-        if yylen > 25:
-            distance = self.distance_arrays(curr_location, self.prev_location[yylen - 24])
+        if yylen > 41:
+            distance = self.distance_arrays(curr_location, self.prev_location[yylen - 40])
         else:
-            distance = self.distance_arrays(curr_location, self.prev_location[0])
+            # distance = self.distance_arrays(curr_location, self.prev_location[0])
+            distance = SAVE_DISTANCE + 1
 
         original_distance = self.distance_arrays(
             curr_location, self.vector3d_to_array(self.original_location)
@@ -527,6 +536,7 @@ class ScenarioRunner(object):
 
         if time_interval > SAVE_INTERVAL:
             self.prev_location.append(curr_location)
+            self.pause_index += 1
             if distance > SAVE_DISTANCE:
                 self.camera_save = True
                 self.lidar_save = True
@@ -540,6 +550,10 @@ class ScenarioRunner(object):
                 self.cam_back_right_save = True
                 # self.prev_location.append(curr_location)
                 self.prev_checktime = curr_checktime
+                if self.pause_index == 1:
+                    self.save_no = (int(self.save_no / 10_0000) + 1) * 10_0000 + 1
+            else:
+                self.pause_index = 0
 
             # with open('output_trajectory.txt', 'a') as text_file:
             #     text_file.write(str(self.prev_location))
@@ -761,7 +775,7 @@ class ScenarioRunner(object):
                     setup=False,
                 )
                 self.primary_vehicle = self.agent_instance
-                self.sensor = Sensor(self.lidar)
+                self.sensor = Sensor(self._args.lidar_params, self.lidar)
 
             print(f"Number of ego vehicles {len(self.ego_vehicles)}")
             if self._args.openscenario:
@@ -975,38 +989,18 @@ class ScenarioRunner(object):
         data = {"image": None, "points": None, "depth": None}
 
         # Process in every iteration objects from the LiDARs, Camera and the Depth Camera
-        iterations = self.lidar.num + 2
+        # iterations = self.lidar.num + 2
 
         # if self.sensor_save:
         if self.may_be == 1:
             if len(self.ego_vehicles) > 0:
-                data["points"] = {}
-                for i in range(0, iterations):
-                    try:
-                        s_frame = self.callback.get()
-                    except:
-                        return
-                    if "l" in s_frame[1]:
-                        if s_frame[0] is None:
-                            return
-                        data = self.lidar.process_render_object(s_frame, data)
-                    elif "camera" in s_frame[1]:
-                        if s_frame[0] is None:
-                            return
-                        data["image"] = s_frame[0]
-                    elif "depth" in s_frame[1]:
-                        if s_frame[0] is None:
-                            return
-                        data["depth"] = depth_to_array(s_frame[0]) * 1000
-                        frame_no = s_frame[0].frame
-                    else:
-                        raise ValueError(f"Unrecognized sensor {s_frame[1]}")
-            else:
+                print('Error len(self.ego_vehicles) > 0')
 
+            else:
                 data = self.ddata
                 datapoints = self.ddatapoints
                 received_data = self.agent_instance.input_data
-                data['image'] = received_data['cam_front01'][0]
+                data['image'] = received_data['camera01'][0]
                 data['cam_front_image'] = received_data['cam_front01'][0]
                 data['cam_front_left_image'] = received_data['cam_front_left01'][0]
                 data['cam_front_right_image'] = received_data['cam_front_right01'][0]
@@ -1016,11 +1010,12 @@ class ScenarioRunner(object):
                 data['depth'] = depth_to_array(received_data['depth01'][0]) * 1000
                 data['points'] = {}
                 for i in range(self.lidar.sets):
-                    for j in range(self.lidar.num):
+                    for j in range(self.lidar.num[i]):
                         data['points'][f'l_{i}{j}'] = received_data[f'l_{i}{j}'][0]
 
             self.sensor_save = False
-            from math import sin, cos
+
+            # from math import sin, cos
 
             # datapoints = self.create_datapoints(data)
             #
@@ -1048,8 +1043,10 @@ class ScenarioRunner(object):
             #
             # if data["points"] is None:
             #     return
+
             self.process_multilidar_multibeam_data(data, datapoints)
 
+            # sensor save index
             self.camera_save = False
             self.lidar_save = False
             self.depth_save = False
@@ -1065,30 +1062,10 @@ class ScenarioRunner(object):
         if self.sensor_save:
             if len(self.ego_vehicles) > 0:
                 print('Error len(self.ego_vehicles) > 0')
-                # data["points"] = {}
-                # for i in range(0, iterations):
-                #     try:
-                #         s_frame = self.callback.get()
-                #     except:
-                #         return
-                #     if "l" in s_frame[1]:
-                #         if s_frame[0] is None:
-                #             return
-                #         data = self.lidar.process_render_object(s_frame, data)
-                #     elif "camera" in s_frame[1]:
-                #         if s_frame[0] is None:
-                #             return
-                #         data["image"] = s_frame[0]
-                #     elif "depth" in s_frame[1]:
-                #         if s_frame[0] is None:
-                #             return
-                #         data["depth"] = depth_to_array(s_frame[0]) * 1000
-                #         frame_no = s_frame[0].frame
-                #     else:
-                #         raise ValueError(f"Unrecognized sensor {s_frame[1]}")
+
             else:
                 received_data = self.agent_instance.input_data
-                data['image'] = received_data['cam_front01'][0]
+                data['image'] = received_data['camera01'][0]
                 data['cam_front_image'] = received_data['cam_front01'][0]
                 data['cam_front_left_image'] = received_data['cam_front_left01'][0]
                 data['cam_front_right_image'] = received_data['cam_front_right01'][0]
@@ -1098,7 +1075,7 @@ class ScenarioRunner(object):
                 data['depth'] = depth_to_array(received_data['depth01'][0]) * 1000
                 data['points'] = {}
                 for i in range(self.lidar.sets):
-                    for j in range(self.lidar.num):
+                    for j in range(self.lidar.num[i]):
                         data['points'][f'l_{i}{j}'] = received_data[f'l_{i}{j}'][0]
 
             self.sensor_save = False
@@ -1109,6 +1086,9 @@ class ScenarioRunner(object):
             rotation = self.primary_vehicle.get_transform().rotation
             pitch, roll, yaw = rotation.pitch, rotation.roll, rotation.yaw
             # Since measurements are in degrees, convert to radians
+
+            p_location = self.primary_vehicle.get_transform().location
+            p_x, p_y, p_z = p_location.x, p_location.y, p_location.z
 
             pitch = degrees_to_radians(pitch)
             roll = degrees_to_radians(roll)
@@ -1125,46 +1105,37 @@ class ScenarioRunner(object):
 
             rotRP = np.matmul(rotR, rotP)
 
+            # p_position_path = self.EGO_POSITION_PATH.format(self.save_no)
+
+            data['position'] = f'{p_x} {p_y} {p_z} {roll} {pitch} {yaw}'
+            data['timestamp'] = str(int((float(GameTime.get_time()) + float(self.no.group()) * 1_000_000) * 1_000_000)
+                                    + 1800_0000_0000_0000)
+
             if data["points"] is None:
                 return
-            # self.process_multilidar_multibeam_data(data, datapoints)
+
+            # do not use self.process_multilidar_multibeam_data(data, datapoints) here
+
             self.ddata = data
             self.ddatapoints = datapoints
             self.may_be = 0
 
-            timestamp = GameTime.get_time()
-            wallclock = GameTime.get_wallclocktime()
-            # print('======[Agent] Wallclock_time = {} / Sim_time = {}'.format(wallclock, timestamp))
-
         else:
             if len(self.ego_vehicles) > 0:
-                for i in range(iterations):
-                    self.callback.get()
+                print('Error len(self.ego_vehicles) > 0')
+                # for i in range(iterations):
+                #     self.callback.get()
 
 
     def process_multilidar_multibeam_data(self, data, datapoints):
 
         points_set = []
         lidar_tags_set = []
+        lidar_counts = 0
         for i in range(self.lidar.sets):
             points = []
             lidar_tags = []
-            for j in range(self.lidar.num):
-                # point_cloud = np.copy(
-                #     np.frombuffer(data["points"][f"l_{i}{j}"].raw_data, dtype=np.dtype("f4"))
-                # )
-                # point_cloud = np.reshape(point_cloud, (int(point_cloud.shape[0] / 4), 4))[
-                #     :, :-1
-                # ]
-                # point = np.append(point_cloud, np.ones((point_cloud.shape[0], 1)), axis=1)
-                # transform_matrix = self.lidar_transforms[i].get_matrix()
-                #
-                # point_wrt_car = np.dot(transform_matrix, point.T).T   # transfer to world frame
-                # point = point_wrt_car[:, :-1]
-                #
-                # point[:, 2] -= CAMERA_HEIGHT_POS
-                #
-                # points.append(point)
+            for j in range(self.lidar.num[i]):
 
                 dtype = np.dtype([('floats', 'f4', 4), ('ints', np.uintc, 2)])
 
@@ -1185,7 +1156,8 @@ class ScenarioRunner(object):
                 point_cloud = np.copy(np.reshape(combined_array, (int(combined_array.shape[0]), 4))[:, :-1])
 
                 point = np.append(point_cloud, np.ones((point_cloud.shape[0], 1)), axis=1)
-                transform_matrix = self.lidar_transforms[i * self.lidar.num + j].get_matrix()
+                # transform_matrix = self.lidar_transforms[i * self.lidar.num + j].get_matrix()
+                transform_matrix = self.lidar_transforms[lidar_counts].get_matrix()
 
                 point_wrt_car = np.dot(transform_matrix, point.T).T  # transfer to world frame
                 point = point_wrt_car[:, :-1]
@@ -1194,6 +1166,9 @@ class ScenarioRunner(object):
 
                 points.append(point)
                 lidar_tags.append(lidar_tag)
+
+                lidar_counts += 1
+                print(lidar_counts)
 
             points = np.vstack(points)
             lidar_tags = np.vstack(lidar_tags)
@@ -1228,7 +1203,7 @@ class ScenarioRunner(object):
         self._world_transform_matrix = np.matrix(self._world_transform.get_matrix())
 
         self._camera_transform_matrix = np.matrix(
-            self.manager._agent._sensors_transforms_list['cam_front01'].get_matrix()
+            self.manager._agent._sensors_transforms_list['camera01'].get_matrix()
         )
 
         self._camera_to_car_transform_unreal = self.to_unreal_matrix(
@@ -1360,6 +1335,8 @@ class ScenarioRunner(object):
             else:
                 occluded = 3
 
+            instance_id = agent.id
+
             datapoint = KittiDescriptor()
             datapoint.set_occlusion(occluded)
             datapoint.set_truncated(truncated)
@@ -1369,6 +1346,7 @@ class ScenarioRunner(object):
             datapoint.set_type(obj_type)
             datapoint.set_3d_object_location(midpoint)
             datapoint.set_rotation_y(rotation_y)
+            datapoint.set_instance(instance_id)
 
         return datapoint
 
@@ -1518,6 +1496,17 @@ class ScenarioRunner(object):
         #     # save_lidarseg_tags(lidarseg_fname, lidar_tags, "bin")
         #     return
         if len(datapoints) > 0:
+            if self.save_no % 40 == 0:
+                self.scene_of_this_route += 1
+
+            p_position_path = self.EGO_POSITION_PATH.format(self.save_no)
+            with open(p_position_path, 'w') as file:
+                file.write(data['position'])
+
+            t_timestamp_path = self.TIMESTAMP_PATH.format(self.save_no)
+            with open(t_timestamp_path, 'w') as file:
+                file.write(data['timestamp'])
+
             groundplane_fname = self.GROUNDPLANE_PATH.format(self.save_no)
 
             kitti_fname = self.LABEL_PATH.format(self.save_no)
@@ -1607,14 +1596,21 @@ class ScenarioRunner(object):
                             self.lidar_transforms.append(self.manager._agent._sensors_transforms_list[key])
                             self.lidar_heights.append(self.manager._agent._sensor_heights[key])
 
+                    self.no = re.search(r'\d+', self.manager.scenario_tree.name)
+                    self.save_no = int(self.no.group()) * 1_0000_0000 + 1
+
                     first = False
+
+                    self.scene_of_this_route = 0
 
                 #if self._sync_mode and self._running and self._watchdog.get_status():
                 CarlaDataProvider.get_world().tick()
 
-
                 self.on_render()
 
+                if self.scene_of_this_route == 8:
+                    print(f'Finish collecting route {self.no.group()}')
+                    break
 
         self.manager._watchdog.stop()
 
@@ -1687,7 +1683,18 @@ def in_roi(bbox: np.ndarray, limits: np.ndarray):
     bbox_2 = np.logical_and(bbox[1, :] > limits[1, 0], bbox[1, :] < limits[1, 1])
     bbox_3 = np.logical_and(bbox[2, :] > limits[2, 0], bbox[2, :] < limits[2, 1])
 
-    if np.any(bbox_1 & bbox_2 & bbox_3):
+    b0 = bbox[0, 0] * bbox[0, 0] + bbox[1, 0] * bbox[1, 0] + bbox[2, 0] * bbox[2, 0]
+    b1 = bbox[0, 1] * bbox[0, 1] + bbox[1, 1] * bbox[1, 1] + bbox[2, 1] * bbox[2, 1]
+    b2 = bbox[0, 2] * bbox[0, 2] + bbox[1, 2] * bbox[1, 2] + bbox[2, 2] * bbox[2, 2]
+    b3 = bbox[0, 3] * bbox[0, 3] + bbox[1, 3] * bbox[1, 3] + bbox[2, 3] * bbox[2, 3]
+    b4 = bbox[0, 4] * bbox[0, 4] + bbox[1, 4] * bbox[1, 4] + bbox[2, 4] * bbox[2, 4]
+    b5 = bbox[0, 5] * bbox[0, 5] + bbox[1, 5] * bbox[1, 5] + bbox[2, 5] * bbox[2, 5]
+    b6 = bbox[0, 6] * bbox[0, 6] + bbox[1, 6] * bbox[1, 6] + bbox[2, 6] * bbox[2, 6]
+    b7 = bbox[0, 7] * bbox[0, 7] + bbox[1, 7] * bbox[1, 7] + bbox[2, 7] * bbox[2, 7]
+
+    # if np.any(bbox_1 & bbox_2 & bbox_3):
+    #     return True
+    if min(b0, b1, b2, b3, b4, b5, b6, b7) < float(MAX_RENDER_DEPTH_IN_METERS * MAX_RENDER_DEPTH_IN_METERS):
         return True
     else:
         return False
@@ -1728,7 +1735,7 @@ def main():
     )
     parser.add_argument(
         "--timeout",
-        default="10.0",
+        default="3600.0",
         help="Set the CARLA client timeout value in seconds",
     )
     parser.add_argument(

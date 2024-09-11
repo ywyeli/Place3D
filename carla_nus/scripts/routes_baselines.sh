@@ -5,12 +5,14 @@ set -e
 cd ../scenario_runner
 
 while IFS= read -r line; do
-  python scenario_runner.py --route srunner/data/routes_nus.xml srunner/data/all_towns_traffic_scenarios.json "$line" \
+  python scenario_runner.py \
+  --route srunner/data/nus_berkeley.xml srunner/data/no_scenarios.json "$line" \
   --agent srunner/autoagents/npc_agent.py \
-  --lidar-params ../hyperparams/det_optimal.toml \
-  --hyperparams ../hyperparams/det_optimal.toml \
-  --split training --full_round &>> ../logs/routes_hyper_center.out
-done < ../scripts/all_routes.txt
+  --lidar-params ../hyperparams/det_6x60.toml \
+  --hyperparams ../hyperparams/det_6x60.toml \
+  --split training \
+  --full_round &>> ../logs/det_6x60.out
+done < ../scripts/berkeley_routes.txt
 
 cd ../scripts
 
