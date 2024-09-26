@@ -4,7 +4,7 @@
 <p align="center">
   <img src="docs/figs/logo.png" align="center" width="26%">
   
-  <h3 align="center"><strong>Optimizing LiDAR Placements for Robust Driving Perception in Adverse Conditions</strong></h3>
+  <h3 align="center"><strong>Is Your LiDAR Placement Optimized for 3D Scene Understanding?</strong></h3>
 
   <p align="center">
       <a href="https://ywyeli.github.io/" target='_blank'>Ye Li</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
