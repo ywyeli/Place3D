@@ -67,6 +67,7 @@ Visit our [project page]() to explore more examples. :blue_car:
 
 ## Updates
 
+- \[2024.09\] - Place3D was selected as a spotlight at NeurIPS 2024!
 - \[2024.03\] - Our [paper](https://arxiv.org/abs/2403.17009) is available on arXiv. The code has been made publicly accessible. :rocket:
 
 
