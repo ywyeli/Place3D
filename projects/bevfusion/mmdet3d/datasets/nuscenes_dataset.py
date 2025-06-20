@@ -70,16 +70,22 @@ class NuScenesDataset(Custom3DDataset):
         "vehicle.truck": "truck",
     }
     DefaultAttribute = {
-        "car": "vehicle.parked",
+#        "car": "vehicle.parked",
+#        "pedestrian": "pedestrian.moving",
+#        "trailer": "vehicle.parked",
+#        "truck": "vehicle.parked",
+#        "bus": "vehicle.moving",
+#        "motorcycle": "cycle.without_rider",
+#        "construction_vehicle": "vehicle.parked",
+#        "bicycle": "cycle.without_rider",
+#        "barrier": "",
+#        "traffic_cone": "",
+        "car": "vehicle.stopped",
         "pedestrian": "pedestrian.moving",
-        "trailer": "vehicle.parked",
-        "truck": "vehicle.parked",
+        "truck": "vehicle.stopped",
         "bus": "vehicle.moving",
         "motorcycle": "cycle.without_rider",
-        "construction_vehicle": "vehicle.parked",
         "bicycle": "cycle.without_rider",
-        "barrier": "",
-        "traffic_cone": "",
     }
     AttrMapping = {
         "cycle.with_rider": 0,
@@ -112,14 +118,14 @@ class NuScenesDataset(Custom3DDataset):
     CLASSES = (
         "car",
         "truck",
-        "trailer",
+#        "trailer",
         "bus",
-        "construction_vehicle",
+#        "construction_vehicle",
         "bicycle",
         "motorcycle",
         "pedestrian",
-        "traffic_cone",
-        "barrier",
+#        "traffic_cone",
+#        "barrier",
     )
 
     def __init__(

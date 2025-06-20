@@ -27,11 +27,14 @@ model:
         nms_thr: 0.2
       tasks:
         - ["car"]
-        - ["truck", "construction_vehicle"]
-        - ["bus", "trailer"]
-        - ["barrier"]
+        - ["truck"]
+#        - ["truck", "construction_vehicle"]
+#        - ["bus", "trailer"]
+        - ["bus"]
+#        - ["barrier"]
         - ["motorcycle", "bicycle"]
-        - ["pedestrian", "traffic_cone"]
+#        - ["pedestrian", "traffic_cone"]
+        - ["pedestrian"]
       common_heads:
         reg: [2, 2]
         height: [1, 2]

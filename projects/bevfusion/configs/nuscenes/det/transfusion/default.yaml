@@ -6,7 +6,7 @@ model:
       auxiliary: true
       in_channels: null
       hidden_channel: 128
-      num_classes: 10
+      num_classes: 6
       num_decoder_layers: 1
       num_heads: 8
       nms_kernel_size: 3

@@ -248,12 +248,16 @@ class TransFusionHead(nn.Module):
         if self.test_cfg["dataset"] == "nuScenes":
             local_max[
                 :,
-                8,
-            ] = F.max_pool2d(heatmap[:, 8], kernel_size=1, stride=1, padding=0)
-            local_max[
-                :,
-                9,
-            ] = F.max_pool2d(heatmap[:, 9], kernel_size=1, stride=1, padding=0)
+                5,
+            ] = F.max_pool2d(heatmap[:, 5], kernel_size=1, stride=1, padding=0)
+            # local_max[
+            #     :,
+            #     8,
+            # ] = F.max_pool2d(heatmap[:, 8], kernel_size=1, stride=1, padding=0)
+            # local_max[
+            #     :,
+            #     9,
+            # ] = F.max_pool2d(heatmap[:, 9], kernel_size=1, stride=1, padding=0)
         elif self.test_cfg["dataset"] == "Waymo":  # for Pedestrian & Cyclist in Waymo
             local_max[
                 :,
