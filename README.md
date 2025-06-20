@@ -593,8 +593,7 @@ If you find this work helpful for your research, please kindly consider citing o
 
 ## License
 
-This work is under the <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License Version 2.0</a>, while some specific implementations in this codebase might be with other licenses. Kindly refer to [LICENSE.md](docs/LICENSE.md) for a more careful check, if you are using our code for commercial matters.
-
+Place3D specific code is distributed under the MIT License.
 
 
 ## Acknowledgements
