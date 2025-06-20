@@ -21,7 +21,7 @@
 
 from typing import List
 from math import pi
-from constants import CAMERA_IMAGE_X, CAMERA_IMAGE_Y, CAMERA_HEIGHT_POS
+
 
 class KittiDescriptor:
     # This class is responsible for storing a single datapoint for the kitti 3d object detection task
@@ -109,7 +109,7 @@ class KittiDescriptor:
         x, y, z = [float(x) for x in obj_location][0:3]
         assert None not in [
             self.extent, self.type], "Extent and type must be set before location!"
-        # y -= CAMERA_HEIGHT_POS / 2
+
         if self.type == "pedestrian":
             # Since the midpoint/location of the car is in the middle of the agent, while for pedestrian it is at the bottom
             y -= self.extent[0]
@@ -125,6 +125,9 @@ class KittiDescriptor:
     def set_instance(self, instance):
         self.instance_id = instance
 
+    def set_speed(self, _speed):
+        self.speed = _speed
+
     def __str__(self):
         """ Returns the kitti formatted string of the datapoint if it is valid (all critical variables filled out), else it returns an error."""
         if self.bbox is None:
@@ -133,4 +136,8 @@ class KittiDescriptor:
             bbox_format = " ".join([str(x) for x in self.bbox])
 
         # type, truncated, occluded, alpha, bbox[0], bbox[1], bbox[2], bbox[3], Height, Width, Length, X, Y, Z, Rotation
-        return "{} {} {} {} {} {} {} {} {}".format(self.type, self.truncated, self.occluded, self.alpha, bbox_format, self.dimensions, self.location, self.rotation_y, self.instance_id)
+        return "{} {} {} {} {} {} {} {} {} {}".format(self.type,
+                                                      self.truncated, self.occluded, self.alpha, bbox_format,
+                                                      self.dimensions, self.location, self.rotation_y,
+                                                      self.instance_id,
+                                                      self.speed)

@@ -190,6 +190,8 @@ class ScenarioRunner(object):
         self.LIDAR_SEG_PATH = []
         ldv = toml.load(f"../hyperparams/{args.lidar_params}")['lidar']
         cdv = toml.load(f"../hyperparams/{args.lidar_params}")['camera']
+        self.CAMERA_HEIGHT_POS = ldv['GLOBAL_HEIGHT_POS']
+        self.LIDAR_HEIGHT_POS = ldv['GLOBAL_HEIGHT_POS']
 
         for p in range(ldv["sets"]):
             self.LIDAR_PATH.append(os.path.join(
@@ -404,7 +406,7 @@ class ScenarioRunner(object):
         lidar_bp = self.create_lidar(64.0, 1)
 
         lidar_transform = carla.Transform(
-            carla.Location(x=0.0, y=0.0, z=LIDAR_HEIGHT_POS)
+            carla.Location(x=0.0, y=0.0, z=self.LIDAR_HEIGHT_POS)
         )
         self.lidar_to_car_transform = lidar_transform
 
@@ -424,7 +426,7 @@ class ScenarioRunner(object):
         camera_bp = self.create_camera()
 
         camera_transform = carla.Transform(
-            carla.Location(x=0.0, y=0.0, z=CAMERA_HEIGHT_POS)
+            carla.Location(x=0.0, y=0.0, z=self.CAMERA_HEIGHT_POS)
         )
 
         self._camera_to_car_transform = camera_transform
@@ -441,7 +443,7 @@ class ScenarioRunner(object):
         depth_camera_bp = self.create_depth_camera()
 
         depth_camera_transform = carla.Transform(
-            carla.Location(x=0.0, y=0.0, z=CAMERA_HEIGHT_POS)# + user_offset
+            carla.Location(x=0.0, y=0.0, z=self.CAMERA_HEIGHT_POS)# + user_offset
         )
 
         self.depth_camera = self.world.spawn_actor(
@@ -848,27 +850,27 @@ class ScenarioRunner(object):
         scale = Scale(x=-1)
         return np.dot(matrix, self.create_matrix(translation, rotation, scale))
 
-    def get_camera_to_car_transform_matrix(self):
-        print("function 'get_camera_to_car_transform_matrix' in 'scenario_runner.py' should not be called, please check the usage")
-        vehicle_transform = self.ego_vehicles[0].get_transform()
+    # def get_camera_to_car_transform_matrix(self):
+    #     print("function 'get_camera_to_car_transform_matrix' in 'scenario_runner.py' should not be called, please check the usage")
+    #     vehicle_transform = self.ego_vehicles[0].get_transform()
+    #
+    #     translation = Translation(CAMERA_POS_X, CAMERA_POS_Y, CAMERA_POS_Z)
+    #     rotation = Rotation(CAMERA_ROT_PITCH, CAMERA_ROT_YAW, CAMERA_ROT_ROLL)
+    #     scale = Scale()
+    #
+    #     initial_pos_matrix = self.create_matrix(translation, rotation, scale)
+    #     unreal_transformed_matrix = self.to_unreal_matrix(initial_pos_matrix)
+    #     return unreal_transformed_matrix
 
-        translation = Translation(CAMERA_POS_X, CAMERA_POS_Y, CAMERA_POS_Z)
-        rotation = Rotation(CAMERA_ROT_PITCH, CAMERA_ROT_YAW, CAMERA_ROT_ROLL)
-        scale = Scale()
-
-        initial_pos_matrix = self.create_matrix(translation, rotation, scale)
-        unreal_transformed_matrix = self.to_unreal_matrix(initial_pos_matrix)
-        return unreal_transformed_matrix
-
-    def lidar_to_car_transform_matrix(self):
-        print("function 'lidar_to_car_transform_matrix' in 'scenario_runner.py' should not be called, please check the usage")
-        translation = Translation(LIDAR_POS_X, LIDAR_POS_Y, LIDAR_POS_Z)
-        rotation = Rotation(LIDAR_ROT_PITCH, LIDAR_ROT_YAW, LIDAR_ROT_ROLL)
-        scale = Scale()
-
-        initial_pos_matrix = self.create_matrix(translation, rotation, scale)
-        converter = self.create_matrix(Translation(), Rotation(yaw=90), Scale(z=-1))
-        return np.dot(initial_pos_matrix, converter)
+    # def lidar_to_car_transform_matrix(self):
+    #     print("function 'lidar_to_car_transform_matrix' in 'scenario_runner.py' should not be called, please check the usage")
+    #     translation = Translation(LIDAR_POS_X, LIDAR_POS_Y, LIDAR_POS_Z)
+    #     rotation = Rotation(LIDAR_ROT_PITCH, LIDAR_ROT_YAW, LIDAR_ROT_ROLL)
+    #     scale = Scale()
+    #
+    #     initial_pos_matrix = self.create_matrix(translation, rotation, scale)
+    #     converter = self.create_matrix(Translation(), Rotation(yaw=90), Scale(z=-1))
+    #     return np.dot(initial_pos_matrix, converter)
 
     def create_matrix(self, location, rotation, scale):
         matrix = np.identity(4)
@@ -1162,7 +1164,7 @@ class ScenarioRunner(object):
                 point_wrt_car = np.dot(transform_matrix, point.T).T  # transfer to world frame
                 point = point_wrt_car[:, :-1]
 
-                point[:, 2] -= CAMERA_HEIGHT_POS
+                point[:, 2] -= self.CAMERA_HEIGHT_POS
 
                 points.append(point)
                 lidar_tags.append(lidar_tag)
@@ -1337,6 +1339,9 @@ class ScenarioRunner(object):
 
             instance_id = agent.id
 
+            velocity = agent.get_velocity()
+            speed = math.sqrt(velocity.x ** 2 + velocity.y ** 2 + velocity.z ** 2)
+
             datapoint = KittiDescriptor()
             datapoint.set_occlusion(occluded)
             datapoint.set_truncated(truncated)
@@ -1347,6 +1352,7 @@ class ScenarioRunner(object):
             datapoint.set_3d_object_location(midpoint)
             datapoint.set_rotation_y(rotation_y)
             datapoint.set_instance(instance_id)
+            datapoint.set_speed(speed)
 
         return datapoint
 
@@ -1474,7 +1480,7 @@ class ScenarioRunner(object):
             save_groundplanes(
                 groundplane_fname,
                 self.primary_vehicle.get_transform(),
-                LIDAR_HEIGHT_POS,
+                self.LIDAR_HEIGHT_POS,
             )
 
             save_kitti_data(kitti_fname, datapoints)
@@ -1485,14 +1491,14 @@ class ScenarioRunner(object):
                 point_cloud = points[beam]
 
                 lidar_fname = self.LIDAR_BEAM_PATH.format(self.split, self.save_no, beam)
-                save_lidar_data(lidar_fname, point_cloud, LIDAR_HEIGHT_POS, "bin")
+                save_lidar_data(lidar_fname, point_cloud, self.LIDAR_HEIGHT_POS, "bin")
 
     def _save_training_files(self, data, datapoints, point_cloud, lidar_tags, i=None):
         # if CarlaDataProvider.is_sync_mode():
 
         # if i is not None:
         #     lidar_fname = self.LIDAR_PATH.format(self.save_no*10+i)
-        #     save_lidar_data(lidar_fname, point_cloud, LIDAR_HEIGHT_POS, "bin")
+        #     save_lidar_data(lidar_fname, point_cloud, self.LIDAR_HEIGHT_POS, "bin")
         #     # save_lidarseg_tags(lidarseg_fname, lidar_tags, "bin")
         #     return
         if len(datapoints) > 0:
@@ -1530,7 +1536,7 @@ class ScenarioRunner(object):
             save_groundplanes(
                 groundplane_fname,
                 self.primary_vehicle.get_transform(),
-                LIDAR_HEIGHT_POS)
+                self.LIDAR_HEIGHT_POS)
 
             save_ref_files(self.OUTPUT_FOLDER, self.save_no)
             save_kitti_data(kitti_fname, datapoints)
@@ -1547,7 +1553,7 @@ class ScenarioRunner(object):
                 data["points"], data["depth"], data["image"] = None, None, None, None, None, None, None, None, None
 
             for i_f in range(self.lidar.sets):
-                save_lidar_data(lidar_frame[i_f], point_cloud[i_f], LIDAR_HEIGHT_POS, "bin")
+                save_lidar_data(lidar_frame[i_f], point_cloud[i_f], self.LIDAR_HEIGHT_POS, "bin")
                 save_lidarseg_tags(lidarseg_frame[i_f], lidar_tags[i_f], "bin")
 
             save_calibration_matrices(calib_filename, self._intrinsic, self._extrinsic)

@@ -19,7 +19,7 @@ import psutil
 import time
 import math
 
-LIDAR_HEIGHT_POS = 1.50
+
 
 
 # Function to set CPU affinity
@@ -280,6 +280,12 @@ def create_attribute_json(attribute_json):
          'name': 'vehicle.moving',
          'description': 'Vehicle is moving.'}
     )
+    create_attribute_token = 'vehicle_stopped_vehicle_stopped_'
+    attribute_json.append(
+        {'token': create_attribute_token,
+         'name': 'vehicle.stopped',
+         'description': 'Vehicle, with a driver/rider in/on it, is currently stationary but has an intent to move.'}
+    )
 
     create_attribute_token = 'cyclewithridercyclewithridercycl'
     attribute_json.append(
@@ -288,11 +294,25 @@ def create_attribute_json(attribute_json):
          'description': 'There is a rider on the bicycle or motorcycle.'}
     )
 
+    create_attribute_token = 'bicycle_stopped_bicycle_stopped_'
+    attribute_json.append(
+        {'token': create_attribute_token,
+         'name': 'cycle.without_rider',
+         'description': 'Bicycle is stopped.'}
+    )
+
     create_attribute_token = 'pedestrianmovingpedestrianmoving'
     attribute_json.append(
         {'token': create_attribute_token,
          'name': 'pedestrian.moving',
          'description': 'The human is moving.'}
+    )
+
+    create_attribute_token = 'standingstandingstandingstanding'
+    attribute_json.append(
+        {'token': create_attribute_token,
+         'name': 'pedestrian.standing',
+         'description': 'The human is standing.'}
     )
 
     attribute_jsondata = json.dumps(attribute_json, indent=4, separators=(',', ':'))
@@ -334,7 +354,8 @@ def create_calibrated_sensor_json(calibrated_sensor_json, sensor_list, args):
 
     params = toml.load(f"../carla_nus/hyperparams/{args.hyperparams}")
 
-    param = params['camera']
+    lids = params['lidar']
+    LIDAR_HEIGHT_POS = lids['GLOBAL_HEIGHT_POS']
 
     create_sensor_token = None
     create_calibrated_sensor_token = None
@@ -424,7 +445,11 @@ def nuread(pathh, path_position, path_timestamp, root_path, scene_numbers, args)
     instances = {}
 
     instance_token = 0
-    
+
+    params = toml.load(f"../carla_nus/hyperparams/{args.hyperparams}")
+
+    lids = params['lidar']
+    LIDAR_HEIGHT_POS = lids['GLOBAL_HEIGHT_POS']
 
     sensor_list = ['LIDAR_TOP', 'CAM_BACK', 'CAM_BACK_LEFT', 'CAM_BACK_RIGHT',
                    'CAM_FRONT', 'CAM_FRONT_LEFT', 'CAM_FRONT_RIGHT']
@@ -763,38 +788,57 @@ def nuread(pathh, path_position, path_timestamp, root_path, scene_numbers, args)
             #########################################################################################################
 
             for data in datas:
-                instance_token_h = 'it' + str(file_no)[2:8] + '{0:08d}'.format(scene_name) + '{0:08d}'.format(int(data[-1]))
+                instance_token_h = 'it' + str(file_no)[2:8] + '{0:08d}'.format(scene_name) + '{0:08d}'.format(int(data[-2]))
+                speed_h = float(data[-1])
 
                 if data[0] == 'car':
                     category_token = 'categorylidardetcategory00000car'
-                    attribute_tokens = 'vehiclemovingvehiclemovingvehicl'
+                    if speed_h >= 1:
+                        attribute_tokens = 'vehiclemovingvehiclemovingvehicl'
+                    else:
+                        attribute_tokens = 'vehicle_stopped_vehicle_stopped_'
                     instance_token = instance_token_h + '00000car'
                     # print(data)
                 elif data[0] == 'bus':
                     category_token = 'categorylidardetcategory00000bus'
-                    attribute_tokens = 'vehiclemovingvehiclemovingvehicl'
+                    if speed_h >= 1:
+                        attribute_tokens = 'vehiclemovingvehiclemovingvehicl'
+                    else:
+                        attribute_tokens = 'vehicle_stopped_vehicle_stopped_'
                     instance_token = instance_token_h + '00000bus'
                     # print(data)
                 elif data[0] == 'truck':
                     category_token = 'categorylidardetcategory000truck'
-                    attribute_tokens = 'vehiclemovingvehiclemovingvehicl'
+                    if speed_h >= 1:
+                        attribute_tokens = 'vehiclemovingvehiclemovingvehicl'
+                    else:
+                        attribute_tokens = 'vehicle_stopped_vehicle_stopped_'
                     instance_token = instance_token_h + '000truck'
                     # print(data)
 
                 elif data[0] == 'bicycle':
                     category_token = 'categorylidardetcategory0bicycle'
-                    attribute_tokens = 'cyclewithridercyclewithridercycl'
+                    if speed_h >= 1:
+                        attribute_tokens = 'cyclewithridercyclewithridercycl'
+                    else:
+                        attribute_tokens = 'bicycle_stopped_bicycle_stopped_'
                     instance_token = instance_token_h + '0bicycle'
                     # print(data)
                 elif data[0] == 'motorcycle':
                     category_token = 'categorylidardetcategory000motor'
-                    attribute_tokens = 'cyclewithridercyclewithridercycl'
+                    if speed_h >= 1:
+                        attribute_tokens = 'cyclewithridercyclewithridercycl'
+                    else:
+                        attribute_tokens = 'bicycle_stopped_bicycle_stopped_'
                     instance_token = instance_token_h + '000motor'
                     # print(data)
 
                 elif data[0] == 'pedestrian':
                     category_token = 'categorylidardetcategory000adult'
-                    attribute_tokens = 'pedestrianmovingpedestrianmoving'
+                    if speed_h >= 0.2:
+                        attribute_tokens = 'pedestrianmovingpedestrianmoving'
+                    else:
+                        attribute_tokens = 'standingstandingstandingstanding'
                     instance_token = instance_token_h + '000adult'
                     # print(data)
 
