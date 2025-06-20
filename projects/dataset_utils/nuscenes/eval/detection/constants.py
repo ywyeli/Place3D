@@ -1,30 +1,31 @@
 # nuScenes dev-kit.
 # Code written by Oscar Beijbom and Varun Bankiti, 2019.
 
-DETECTION_NAMES = ['car', 'truck', 'bus', 'trailer', 'construction_vehicle', 'pedestrian', 'motorcycle', 'bicycle',
-                   'traffic_cone', 'barrier']
+# DETECTION_NAMES = ['car', 'truck', 'bus', 'trailer', 'construction_vehicle', 'pedestrian', 'motorcycle', 'bicycle',
+#                    'traffic_cone', 'barrier']
+DETECTION_NAMES = ['car', 'truck', 'bus', 'pedestrian', 'motorcycle', 'bicycle']
 
 PRETTY_DETECTION_NAMES = {'car': 'Car',
                           'truck': 'Truck',
                           'bus': 'Bus',
-                          'trailer': 'Trailer',
-                          'construction_vehicle': 'Constr. Veh.',
+#                           'trailer': 'Trailer',
+#                           'construction_vehicle': 'Constr. Veh.',
                           'pedestrian': 'Pedestrian',
                           'motorcycle': 'Motorcycle',
-                          'bicycle': 'Bicycle',
-                          'traffic_cone': 'Traffic Cone',
-                          'barrier': 'Barrier'}
+                          'bicycle': 'Bicycle'}
+#                           'traffic_cone': 'Traffic Cone',
+#                           'barrier': 'Barrier'}
 
 DETECTION_COLORS = {'car': 'C0',
                     'truck': 'C1',
                     'bus': 'C2',
-                    'trailer': 'C3',
-                    'construction_vehicle': 'C4',
+#                     'trailer': 'C3',
+#                     'construction_vehicle': 'C4',
                     'pedestrian': 'C5',
                     'motorcycle': 'C6',
-                    'bicycle': 'C7',
-                    'traffic_cone': 'C8',
-                    'barrier': 'C9'}
+                    'bicycle': 'C7'}
+#                     'traffic_cone': 'C8',
+#                     'barrier': 'C9'}
 
 ATTRIBUTE_NAMES = ['pedestrian.moving', 'pedestrian.sitting_lying_down', 'pedestrian.standing', 'cycle.with_rider',
                    'cycle.without_rider', 'vehicle.moving', 'vehicle.parked', 'vehicle.stopped']
