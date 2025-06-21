@@ -128,8 +128,7 @@ Kindly refer to [DATA_PREPARE.md](docs/document/DATA_PREPARE.md) for the details
 ## :ferris_wheel: Place3D Pipeline
 
 | <img src="docs/figs/pipeline.png" align="center" width="98%"> |
-| :-: | 
-| We first generate Probabilistic SOG (b) by merging multiple frames of data synthesized in CARLA into dense point cloud (a) and obtain voxels covered by LiDAR rays to compute the Surrogate Metric of Semantic Occupancy Grids (M-SOG) based on the joint probability distribution of covered voxels (c). We propose a CMA-ES-based optimization strategy to maximize M-SOG, finding optimal LiDAR placement (d). To verify the effectiveness of our optimization strategy, we contribute a multi-condition multi-LiDAR dataset (e). We train several state-of-the-art models and evaluate the performance of baseline and optimized placements on both clean and corruption data (f). Our optimized placement generally outperforms all baseline placements in experiments. |
+We first generate Probabilistic SOG (b) by merging multiple frames of data synthesized in CARLA into dense point cloud (a) and obtain voxels covered by LiDAR rays to compute the Surrogate Metric of Semantic Occupancy Grids (M-SOG) based on the joint probability distribution of covered voxels (c). We propose a CMA-ES-based optimization strategy to maximize M-SOG, finding optimal LiDAR placement (d). To verify the effectiveness of our optimization strategy, we contribute a multi-condition multi-LiDAR dataset (e). We train several state-of-the-art models and evaluate the performance of baseline and optimized placements on both clean and corruption data (f). Our optimized placement generally outperforms all baseline placements in experiments.
 
 
 
@@ -142,8 +141,7 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
 ## :hammer_and_wrench: SOG Generation
 
 | <img src="docs/figs/sog.png" align="center" width="99%"> |
-| :-: | 
-| We generate dense point clouds (b) by merging multiple frames of raw point clouds (a). Then, we voxelize the dense point clouds into Semantic Occupancy Grids (SOG) (c), and traverse all frames of dense point clouds to compute Probabilistic Semantic Occupancy Grids (P-SOG) (d). |
+We generate dense point clouds (b) by merging multiple frames of raw point clouds (a). Then, we voxelize the dense point clouds into Semantic Occupancy Grids (SOG) (c), and traverse all frames of dense point clouds to compute Probabilistic Semantic Occupancy Grids (P-SOG) (d).
 
 
 
@@ -574,11 +572,13 @@ To learn more usage about this codebase, kindly refer to [GET_STARTED.md](docs/G
 If you find this work helpful for your research, please kindly consider citing our papers:
 
 ```bibtex
-@article{li2024place3d,
-    author = {Ye Li and Lingdong Kong and Hanjiang Hu and Xiaohao Xu and Xiaonan Huang},
-    title = {Optimizing LiDAR Placements for Robust Driving Perception in Adverse Conditions},
-    journal = {arXiv preprint arXiv:2403.17009},
-    year = {2024},
+@article{li2024your,
+  title={Is your lidar placement optimized for 3d scene understanding?},
+  author={Li, Ye and Kong, Lingdong and Hu, Hanjiang and Xu, Xiaohao and Huang, Xiaonan},
+  journal={Advances in Neural Information Processing Systems},
+  volume={37},
+  pages={34980--35017},
+  year={2024}
 }
 ```
 ```bibtex
