@@ -8,7 +8,7 @@ sys.path.append(
 import toml
 import carla
 
-from constants import CAMERA_IMAGE_X, CAMERA_IMAGE_Y, LIDAR_DEPTH_IN_METERS
+from constants import CAMERA_IMAGE_X, CAMERA_IMAGE_Y
 # from constants import *
 
 
@@ -28,6 +28,9 @@ class LiDARSetup(object):
         self.z = params["z"]
         self.roll = params["roll"]
         self.pitch = params["pitch"]
+        self.lidar_range_in_meters = params["lidar_range_in_meters"]
+        self.rotation_frequency = params["rotation_frequency"]
+        self.points_per_channel = params["points_per_channel"]
         self.stats = {}
         if setup:
             # self._check_for_errors()
@@ -72,24 +75,23 @@ class LiDARSetup(object):
         specs = []
 
         for i in range(self.sets):
-            for j in range(self.num[i]):
+            for kk in range(self.num[i]):
                 spec = {}
-                spec['x'], spec['y'], spec['z'] = self.x[i][j], self.y[i][j], self.z[i][j]
-                spec['roll'], spec['pitch'], spec['yaw'] = self.roll[i][j], self.pitch[i][j], 0
+                spec['x'], spec['y'], spec['z'] = self.x[i][kk], self.y[i][kk], self.z[i][kk]
+                spec['roll'], spec['pitch'], spec['yaw'] = self.roll[i][kk], self.pitch[i][kk], 0
                 spec["noise_stddev"] = "0.2"
 
-                spec["upper_fov"] = str(self.upper_fov)
-                spec["lower_fov"] = str(self.lower_fov)
+                spec["upper_fov"] = str(self.upper_fov[i])
+                spec["lower_fov"] = str(self.lower_fov[i])
                 spec["channels"] = str(self.channels[i])
 
-                spec["range"] = str(LIDAR_DEPTH_IN_METERS)
+                spec["range"] = str(self.lidar_range_in_meters)
 
-                spec["rotation_frequency"] = str(20.0)
+                spec["rotation_frequency"] = str(self.rotation_frequency)
 
-                points = 20_000 * self.channels[i]  # default 5000
+                spec["points_per_second"] = str(self.points_per_channel[i] * self.channels[i])  # default 20_000
 
-                spec["points_per_second"] = str(points)
-                spec["id"] = f"l_{i}{j}"
+                spec["id"] = f"l_{i}{kk}"
                 spec["type"] = "sensor.lidar.ray_cast_semantic"
 
                 specs.append(spec)
