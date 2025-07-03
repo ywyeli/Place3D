@@ -75,23 +75,21 @@ class LiDARSetup(object):
         specs = []
 
         for i in range(self.sets):
-            for kk in range(self.num[i]):
+            for j in range(self.num[i]):
                 spec = {}
-                spec['x'], spec['y'], spec['z'] = self.x[i][kk], self.y[i][kk], self.z[i][kk]
-                spec['roll'], spec['pitch'], spec['yaw'] = self.roll[i][kk], self.pitch[i][kk], 0
+                spec['x'], spec['y'], spec['z'] = self.x[i][j], self.y[i][j], self.z[i][j]
+                spec['roll'], spec['pitch'], spec['yaw'] = self.roll[i][j], self.pitch[i][j], 0
                 spec["noise_stddev"] = "0.2"
 
-                spec["upper_fov"] = str(self.upper_fov[i])
-                spec["lower_fov"] = str(self.lower_fov[i])
-                spec["channels"] = str(self.channels[i])
+                spec["upper_fov"] = str(self.upper_fov[i][j])
+                spec["lower_fov"] = str(self.lower_fov[i][j])
+                spec["channels"] = str(self.channels[i][j])
 
-                spec["range"] = str(self.lidar_range_in_meters)
-
-                spec["rotation_frequency"] = str(self.rotation_frequency)
-
-                spec["points_per_second"] = str(self.points_per_channel[i] * self.channels[i])  # default 20_000
-
-                spec["id"] = f"l_{i}{kk}"
+                spec["range"] = str(self.lidar_range_in_meters[i][j])
+                spec["rotation_frequency"] = str(self.rotation_frequency[i][j])
+                spec["points_per_second"] = str(self.points_per_channel[i][j] * self.channels[i][j]) 
+                
+                spec["id"] = f"l_{i}{j}"
                 spec["type"] = "sensor.lidar.ray_cast_semantic"
 
                 specs.append(spec)
