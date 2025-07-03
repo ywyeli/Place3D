@@ -12,9 +12,7 @@ WINDOW_HEIGHT = CAMERA_IMAGE_Y
 SAVE_DISTANCE = 2
 SAVE_INTERVAL = 0.48
 
-LIDAR_DEPTH_IN_METERS = 100.0
-
-MAX_RENDER_DEPTH_IN_METERS = 70.0
+MAX_RENDER_DEPTH_IN_METERS = 141.0
 MIN_VISIBLE_VERTICES_FOR_RENDER = 4
 
 MIN_VALID_VERTICES_FOR_RENDER = 4
@@ -36,21 +34,6 @@ MAX_LIMIT = np.array(
     ]
 )
 
-# LIMITS = np.array(
-#     [
-#         [-40.0, 40.0],
-#         [-20.0, 20.0],
-#         [-3.0, 1.0]
-#     ]
-# )
-#
-# MAX_LIMIT = np.array(
-#     [
-#         [-40.0, 40.0],
-#         [-20.0, 20.0],
-#         [-3.0, 1.0]
-#     ]
-# )
 
 MIN_BBOX_AREA_IN_PX = 100
 
